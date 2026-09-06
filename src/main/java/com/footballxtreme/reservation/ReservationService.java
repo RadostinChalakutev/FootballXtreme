@@ -1,5 +1,6 @@
 package com.footballxtreme.reservation;
 
+import com.footballxtreme.email.EmailService;
 import com.footballxtreme.pitch.Pitch;
 import com.footballxtreme.pitch.PitchRepository;
 import com.footballxtreme.settings.BlockedTime;
@@ -16,15 +17,18 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final PitchRepository pitchRepository;
     private final BlockedTimeRepository blockedTimeRepository;
+    private final EmailService emailService;
 
     public ReservationService(
             ReservationRepository reservationRepository,
             PitchRepository pitchRepository,
-            BlockedTimeRepository blockedTimeRepository
+            BlockedTimeRepository blockedTimeRepository,
+            EmailService emailService
     ) {
         this.reservationRepository = reservationRepository;
         this.pitchRepository = pitchRepository;
         this.blockedTimeRepository = blockedTimeRepository;
+        this.emailService = emailService;
     }
 
     // =========================================================
@@ -202,9 +206,35 @@ public class ReservationService {
                 ReservationStatus.CONFIRMED
         );
 
-        return reservationRepository.save(
-                reservation
-        );
+        // -----------------------------------------------------
+        // SAVE
+        // -----------------------------------------------------
+
+        Reservation savedReservation =
+                reservationRepository.save(
+                        reservation
+                );
+
+        // -----------------------------------------------------
+        // SEND CONFIRMATION EMAIL
+        // -----------------------------------------------------
+
+        try {
+
+            emailService.sendReservationConfirmation(
+                    savedReservation
+            );
+
+        } catch (Exception e) {
+
+            System.err.println(
+                    "Reservation was created, but confirmation email could not be sent."
+            );
+
+            e.printStackTrace();
+        }
+
+        return savedReservation;
     }
 
     // =========================================================
@@ -237,15 +267,21 @@ public class ReservationService {
                 reservation
         );
     }
+
+    // =========================================================
+    // GET RESERVATIONS FOR PITCH AND DATE
+    // =========================================================
+
     public List<Reservation> getReservationsForPitchAndDate(
             Long pitchId,
             LocalDate date
     ) {
 
-        return reservationRepository.findActiveReservationsForPitchAndDate(
-                pitchId,
-                date,
-                ReservationStatus.CONFIRMED
-        );
+        return reservationRepository
+                .findActiveReservationsForPitchAndDate(
+                        pitchId,
+                        date,
+                        ReservationStatus.CONFIRMED
+                );
     }
 }

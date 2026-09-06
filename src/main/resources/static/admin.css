@@ -27,7 +27,7 @@ body {
 .admin-info {
     font-size: 13px;
     font-weight: bold;
-    opacity: 0.8;
+    opacity: .8;
 }
 
 .container {
@@ -41,6 +41,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    gap: 20px;
 }
 
 .page-header h1 {
@@ -57,8 +58,9 @@ body {
     background: white;
     padding: 15px 20px;
     border-radius: 12px;
-    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    box-shadow: 0 3px 15px rgba(0, 0, 0, .06);
     text-align: center;
+    min-width: 130px;
 }
 
 .today-box span {
@@ -77,7 +79,7 @@ body {
     border-radius: 15px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 3px 18px rgba(0,0,0,.06);
+    box-shadow: 0 3px 18px rgba(0, 0, 0, .06);
 }
 
 .panel-header {
@@ -85,6 +87,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    gap: 15px;
 }
 
 .panel-header h2 {
@@ -94,6 +97,7 @@ body {
 .panel-header p {
     margin: 0;
     color: #6b7280;
+    line-height: 1.5;
 }
 
 .dashboard-grid {
@@ -106,16 +110,29 @@ body {
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     padding: 18px;
+    overflow: hidden;
 }
 
 .pitch-day-card h3 {
     margin: 0 0 15px;
 }
 
+.work-hours-info {
+    margin: -5px 0 15px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.day-schedule {
+    display: flex;
+    flex-direction: column;
+}
+
 .time-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     padding: 11px 0;
     border-bottom: 1px solid #f0f0f0;
 }
@@ -133,6 +150,7 @@ body {
     font-weight: bold;
     padding: 5px 9px;
     border-radius: 20px;
+    text-align: center;
 }
 
 .status.free {
@@ -148,6 +166,25 @@ body {
 .status.blocked {
     background: #fef3c7;
     color: #92400e;
+}
+
+.status.closed {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.calendar-toolbar,
+.time-management-toolbar,
+.add-pitch-form {
+    display: flex;
+    align-items: end;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.calendar-toolbar {
+    justify-content: space-between;
 }
 
 .calendar-controls {
@@ -166,12 +203,83 @@ body {
     font-size: 22px;
 }
 
-.calendar-toolbar {
+.form-group {
     display: flex;
-    justify-content: space-between;
-    align-items: end;
-    margin-bottom: 20px;
-    gap: 20px;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+input,
+select {
+    height: 43px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #111827;
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, .08);
+}
+
+button {
+    font-family: inherit;
+}
+
+.primary-btn,
+.secondary-btn,
+.warning-btn,
+.danger-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background: #111827;
+    color: white;
+}
+
+.secondary-btn {
+    background: #eef2f7;
+    color: #17202a;
+}
+
+.warning-btn {
+    background: #f59e0b;
+    color: white;
+}
+
+.danger-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.warning-btn:hover,
+.danger-btn:hover,
+.icon-btn:hover {
+    filter: brightness(.96);
+}
+
+.toolbar-action-btn {
+    height: 43px;
 }
 
 .calendar {
@@ -227,8 +335,26 @@ body {
     color: #6b7280;
 }
 
+.selected-date-title {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.calendar-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.calendar-details-header h3 {
+    margin: 0;
+}
+
 .calendar-reservations {
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 .reservation-card {
@@ -241,6 +367,11 @@ body {
 
 .reservation-card:hover {
     background: #f8fafc;
+}
+
+.blocked-card {
+    cursor: default;
+    background: #fffaf0;
 }
 
 .reservation-main {
@@ -256,6 +387,7 @@ body {
 
 .reservation-name {
     font-weight: bold;
+    margin-top: 4px;
 }
 
 .reservation-meta {
@@ -271,141 +403,181 @@ body {
     align-items: end;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-
-.form-group.full {
-    grid-column: 1 / -1;
-}
-
-label {
-    font-size: 13px;
-    font-weight: bold;
-}
-
-input,
-select {
-    height: 43px;
-    padding: 0 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: white;
-    font-size: 14px;
-}
-
-button {
-    font-family: inherit;
-}
-
-.primary-btn,
-.secondary-btn,
-.warning-btn,
-.danger-btn {
-    border: none;
-    border-radius: 8px;
-    padding: 11px 16px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.primary-btn {
-    background: #111827;
-    color: white;
-}
-
-.secondary-btn {
-    background: #eef2f7;
-    color: #17202a;
-}
-
-.warning-btn {
-    background: #f59e0b;
-    color: white;
-}
-
-.danger-btn {
-    background: #dc2626;
-    color: white;
-}
-
-.primary-btn:hover,
-.secondary-btn:hover,
-.warning-btn:hover,
-.danger-btn:hover {
-    opacity: .85;
-}
-
 .available-pitches {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
     margin-top: 20px;
 }
 
 .available-pitch {
-    padding: 18px;
-    border-radius: 10px;
     border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
 }
 
 .available-pitch.free {
-    background: #f0fdf4;
+    border-left: 5px solid #22c55e;
 }
 
 .available-pitch.busy {
-    background: #fef2f2;
+    border-left: 5px solid #ef4444;
 }
 
 .available-pitch.blocked {
-    background: #fffbeb;
+    border-left: 5px solid #f59e0b;
 }
 
 .pitch-list {
-    display: grid;
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .pitch-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    padding: 18px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
 }
 
 .pitch-name {
-    font-weight: bold;
-    font-size: 17px;
+    font-weight: 800;
 }
 
 .pitch-status {
-    font-size: 12px;
     margin-top: 5px;
+    font-size: 13px;
+    color: #6b7280;
 }
 
 .pitch-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
-.loading {
+.blocked-time-grid {
+    margin-top: 10px;
+}
+
+.blocked-time-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.blocked-time-header strong {
+    font-size: 16px;
+}
+
+.blocked-time-header span {
     color: #6b7280;
-    padding: 20px 0;
+    font-size: 13px;
+}
+
+.blocked-time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 800px;
+}
+
+.blocked-time-slot {
+    width: 100%;
+    min-height: 64px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-family: inherit;
+    transition: .15s;
+    text-align: left;
+}
+
+.blocked-time-slot.free {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.blocked-time-slot.blocked {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.blocked-time-slot.reserved {
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: not-allowed;
+}
+
+.blocked-time-slot:hover:not(:disabled) {
+    transform: translateX(3px);
+}
+
+.blocked-slot-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.blocked-slot-time {
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.blocked-slot-reason {
+    font-size: 12px;
+    opacity: .8;
+}
+
+.blocked-slot-status {
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.blocked-closed {
+    padding: 20px;
+    text-align: center;
+    background: #f8fafc;
+    border-radius: 10px;
+    color: #6b7280;
+}
+
+.blocked-time-help {
+    margin-top: 15px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.loading {
+    padding: 20px;
+    text-align: center;
+    color: #6b7280;
 }
 
 .modal {
-    display: none;
     position: fixed;
-    z-index: 1000;
     inset: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .55);
+    display: none;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    z-index: 1000;
 }
 
 .modal.show {
@@ -414,27 +586,34 @@ button {
 
 .modal-content {
     background: white;
-    width: 100%;
-    max-width: 650px;
+    width: min(700px, 100%);
     max-height: 90vh;
     overflow-y: auto;
     border-radius: 15px;
     padding: 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .2);
 }
 
 .modal-content.small {
-    max-width: 450px;
+    width: min(500px, 100%);
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
 .modal-header h2 {
     margin: 0;
+}
+
+.modal-context {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 13px;
 }
 
 .close-btn {
@@ -442,14 +621,15 @@ button {
     background: transparent;
     font-size: 28px;
     cursor: pointer;
+    line-height: 1;
 }
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 10px;
-    margin-top: 25px;
     flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .form-grid {
@@ -459,36 +639,35 @@ button {
 }
 
 .reservation-details {
-    display: grid;
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
 }
 
 .detail-row {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
-    padding: 12px;
-    background: #f8fafc;
-    border-radius: 8px;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .detail-label {
     color: #6b7280;
+    font-size: 13px;
 }
 
 .detail-value {
-    font-weight: bold;
+    font-weight: 700;
+    text-align: right;
 }
 
-@media (max-width: 800px) {
-
+@media (max-width: 900px) {
     .container {
-        padding: 15px;
+        padding: 20px;
     }
 
     .page-header {
         align-items: flex-start;
-        gap: 15px;
         flex-direction: column;
     }
 
@@ -496,27 +675,49 @@ button {
         grid-template-columns: 1fr;
     }
 
-    .calendar-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+    .calendar-day {
+        min-height: 75px;
+    }
+}
+
+@media (max-width: 650px) {
+    .topbar {
+        padding: 0 18px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+
+    .calendar {
+        font-size: 12px;
     }
 
     .calendar-day {
-        min-height: 70px;
-        padding: 6px;
+        padding: 7px;
+        min-height: 65px;
+    }
+
+    .calendar-details-header,
+    .reservation-main,
+    .pitch-card {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     .form-grid {
         grid-template-columns: 1fr;
     }
 
-    .pitch-card {
+    .detail-row {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
     }
 
-    .pitch-actions {
-        flex-wrap: wrap;
+    .detail-value {
+        text-align: left;
     }
 }

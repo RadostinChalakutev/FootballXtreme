@@ -3,611 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>FootballXtreme - Admin</title>
-
     <link rel="stylesheet" href="admin.css">
 </head>
 
 <body>
 
 <header class="topbar">
-    <div class="logo">
-        FootballXtreme
-    </div>
-
-    <div class="admin-info">
-        ADMIN PANEL
-    </div>
+    <div class="logo">FootballXtreme</div>
+    <div class="admin-info">ADMIN PANEL</div>
 </header>
 
 <main class="container">
 
-    <!-- ================= DASHBOARD ================= -->
-
     <section class="page-header">
         <div>
             <h1>Административен панел</h1>
-            <p>Управление на резервации, игрища и график.</p>
+            <p>Управление на резервации, игрища и работно време.</p>
         </div>
 
         <div class="today-box">
             <span>Днес</span>
-            <strong id="todayDate">--</strong>
+            <strong id="todayDate">-</strong>
         </div>
     </section>
 
-
-    <!-- ================= DAILY DASHBOARD ================= -->
-
+    <!-- DASHBOARD -->
     <section class="panel">
-
         <div class="panel-header">
             <div>
-                <h2>📊 Днешен график</h2>
-                <p>Заети, свободни и блокирани периоди.</p>
+                <h2>Днешни резервации</h2>
+                <p>Заети, свободни и блокирани периоди за днес.</p>
             </div>
-
-            <button class="secondary-btn" onclick="loadDashboard()">
+            <button class="secondary-btn" type="button" id="refreshDashboardButton">
                 🔄 Обнови
             </button>
         </div>
 
         <div id="dashboard" class="dashboard-grid">
-            <div class="loading">
-                Зареждане...
-            </div>
+            <div class="loading">Зареждане...</div>
         </div>
-
     </section>
 
-
-    <!-- ================= CALENDAR ================= -->
-
+    <!-- CALENDAR -->
     <section class="panel">
-
         <div class="panel-header">
-
             <div>
-                <h2>📅 Календар</h2>
-                <p>Избери дата и виж всички резервации.</p>
+                <h2>Календар</h2>
+                <p>Изберете дата и вижте всички резервации.</p>
             </div>
 
             <div class="calendar-controls">
-
-                <button class="icon-btn" onclick="previousMonth()">
-                    ‹
-                </button>
-
-                <strong id="calendarTitle">
-                    --
-                </strong>
-
-                <button class="icon-btn" onclick="nextMonth()">
-                    ›
-                </button>
-
+                <button class="icon-btn" id="previousMonth" type="button">‹</button>
+                <strong id="calendarMonth">-</strong>
+                <button class="icon-btn" id="nextMonth" type="button">›</button>
             </div>
-
         </div>
-
 
         <div class="calendar-toolbar">
-
             <div class="form-group">
-
-                <label for="calendarPitch">
-                    Игрище
-                </label>
-
-                <select id="calendarPitch"
-                        onchange="loadCalendar()">
-
-                    <option value="">
-                        Всички игрища
-                    </option>
-
+                <label for="calendarPitch">Игрище</label>
+                <select id="calendarPitch" data-pitch-selector>
+                    <option value="">Всички игрища</option>
                 </select>
-
             </div>
 
 
-            <button class="primary-btn"
-                    onclick="openBlockModal()">
+        </div>
 
+        <div id="calendar" class="calendar"></div>
+
+        <div id="selectedDateTitle" class="selected-date-title">
+            Изберете дата
+        </div>
+
+        <div id="calendarReservations" class="calendar-reservations">
+            <div class="loading">Изберете дата от календара.</div>
+        </div>
+    </section>
+
+    <!-- TIME MANAGEMENT -->
+    <section class="panel">
+        <div class="panel-header">
+            <div>
+                <h2>Управление на часовете</h2>
+                <p>
+                    Часовете се генерират според Working Hours за избрания ден.
+                    Натиснете свободен час за блокиране или блокиран час за отблокиране.
+                </p>
+            </div>
+        </div>
+
+        <div class="time-management-toolbar">
+            <div class="form-group">
+                <label for="blockedPitch">Игрище</label>
+                <select id="blockedPitch" data-pitch-selector>
+                    <option value="">Изберете игрище</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="blockedDate">Дата</label>
+                <input type="date" id="blockedDate">
+            </div>
+
+            <button class="warning-btn toolbar-action-btn" type="button" id="directBlockButton">
                 🔒 Блокирай период
-
             </button>
-
         </div>
 
-
-        <div id="calendar"
-             class="calendar">
+        <div id="blockedTimeGrid" class="blocked-time-grid">
+            <div class="loading">Изберете игрище и дата.</div>
         </div>
-
-
-        <div id="calendarReservations"
-             class="calendar-reservations">
-        </div>
-
     </section>
 
-
-    <!-- ================= FREE PITCH SEARCH ================= -->
-
+    <!-- PITCH MANAGEMENT -->
     <section class="panel">
-
         <div class="panel-header">
-
             <div>
-                <h2>🔎 Свободни игрища</h2>
-                <p>
-                    Провери кои игрища са свободни за конкретен период.
-                </p>
+                <h2>Игрища</h2>
+                <p>Добавяне, преименуване и промяна на статуса на игрищата.</p>
             </div>
-
         </div>
 
-
-        <div class="search-form">
-
+        <div class="add-pitch-form">
             <div class="form-group">
-
-                <label for="searchDate">
-                    Дата
-                </label>
-
-                <input type="date"
-                       id="searchDate">
-
+                <label for="newPitchName">Ново игрище</label>
+                <input
+                        type="text"
+                        id="newPitchName"
+                        placeholder="Например: Игрище 4"
+                >
             </div>
 
-
-            <div class="form-group">
-
-                <label for="searchStartTime">
-                    От
-                </label>
-
-                <input type="time"
-                       id="searchStartTime">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="searchDuration">
-                    Продължителност
-                </label>
-
-                <select id="searchDuration">
-
-                    <option value="60">
-                        60 минути
-                    </option>
-
-                    <option value="90">
-                        90 минути
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <button class="primary-btn"
-                    onclick="searchAvailablePitches()">
-
-                Провери
-
+            <button class="primary-btn" id="addPitchButton" type="button">
+                Добави игрище
             </button>
-
         </div>
 
-
-        <div id="availablePitches"
-             class="available-pitches">
+        <div id="pitchList" class="pitch-list">
+            <div class="loading">Зареждане...</div>
         </div>
-
     </section>
 
-
-    <!-- ================= PITCH MANAGEMENT ================= -->
-
-    <section class="panel">
-
-        <div class="panel-header">
-
-            <div>
-                <h2>⚽ Игрища</h2>
-                <p>
-                    Добавяне, редактиране и управление на статуса.
-                </p>
+    <!-- RESERVATION MODAL -->
+    <div id="reservationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Резервация</h2>
+                <button id="closeReservationModal" class="close-btn" type="button">×</button>
             </div>
 
-            <button class="primary-btn"
-                    onclick="openPitchModal()">
+            <div id="reservationDetails" class="reservation-details"></div>
 
-                ➕ Добави игрище
+            <div class="modal-actions">
+                <button id="cancelReservationButton" class="danger-btn" type="button">
+                    Отмени резервацията
+                </button>
 
-            </button>
-
+                <button id="closeReservationModalBottom" class="secondary-btn" type="button">
+                    Затвори
+                </button>
+            </div>
         </div>
+    </div>
 
-
-        <div id="pitches"
-             class="pitch-list">
-
-            <div class="loading">
-                Зареждане...
+    <!-- BLOCK MODAL -->
+    <div id="blockTimeModal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <div>
+                    <h2>Блокиране на период</h2>
+                    <div id="blockContext" class="modal-context">-</div>
+                </div>
+                <button id="closeBlockTimeModal" class="close-btn" type="button">×</button>
             </div>
 
-        </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="blockStartTime">От</label>
+                    <input type="time" id="blockStartTime">
+                </div>
 
-    </section>
+                <div class="form-group">
+                    <label for="blockEndTime">До</label>
+                    <input type="time" id="blockEndTime">
+                </div>
+
+                <div class="form-group full">
+                    <label for="blockReason">Причина</label>
+                    <input
+                            type="text"
+                            id="blockReason"
+                            placeholder="Например: Техническа поддръжка"
+                    >
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="blockTimeButton" class="warning-btn" type="button">
+                    Блокирай периода
+                </button>
+
+                <button id="closeBlockTimeModalBottom" class="secondary-btn" type="button">
+                    Отказ
+                </button>
+            </div>
+        </div>
+    </div>
 
 </main>
 
-
-<!-- ================= RESERVATION MODAL ================= -->
-
-<div id="reservationModal"
-     class="modal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>📋 Резервация</h2>
-
-            <button class="close-btn"
-                    onclick="closeReservationModal()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div id="reservationDetails"
-             class="reservation-details">
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button class="secondary-btn"
-                    onclick="editReservation()">
-
-                ✏️ Редактирай
-
-            </button>
-
-            <button class="warning-btn"
-                    onclick="cancelReservation()">
-
-                ❌ Cancel
-
-            </button>
-
-            <button class="danger-btn"
-                    onclick="deleteReservation()">
-
-                🗑️ Изтрий
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= EDIT RESERVATION MODAL ================= -->
-
-<div id="editReservationModal"
-     class="modal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>✏️ Редактиране</h2>
-
-            <button class="close-btn"
-                    onclick="closeEditReservationModal()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>
-                    Игрище
-                </label>
-
-                <select id="editPitch">
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Дата
-                </label>
-
-                <input type="date"
-                       id="editDate">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Начален час
-                </label>
-
-                <input type="time"
-                       id="editStartTime">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Продължителност
-                </label>
-
-                <select id="editDuration">
-
-                    <option value="60">
-                        60 минути
-                    </option>
-
-                    <option value="90">
-                        90 минути
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group full">
-
-                <label>
-                    Име
-                </label>
-
-                <input type="text"
-                       id="editName">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Телефон
-                </label>
-
-                <input type="text"
-                       id="editPhone">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Email
-                </label>
-
-                <input type="email"
-                       id="editEmail">
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button class="secondary-btn"
-                    onclick="closeEditReservationModal()">
-
-                Откажи
-
-            </button>
-
-            <button class="primary-btn"
-                    onclick="saveReservationChanges()">
-
-                💾 Запази
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= BLOCK MODAL ================= -->
-
-<div id="blockModal"
-     class="modal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>🔒 Блокирай период</h2>
-
-            <button class="close-btn"
-                    onclick="closeBlockModal()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="form-grid">
-
-            <div class="form-group">
-
-                <label>
-                    Игрище
-                </label>
-
-                <select id="blockPitch">
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    Дата
-                </label>
-
-                <input type="date"
-                       id="blockDate">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    От
-                </label>
-
-                <input type="time"
-                       id="blockStartTime">
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label>
-                    До
-                </label>
-
-                <input type="time"
-                       id="blockEndTime">
-
-            </div>
-
-
-            <div class="form-group full">
-
-                <label>
-                    Причина
-                </label>
-
-                <input type="text"
-                       id="blockReason"
-                       placeholder="Например: ремонт">
-
-            </div>
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button class="secondary-btn"
-                    onclick="closeBlockModal()">
-
-                Откажи
-
-            </button>
-
-            <button class="primary-btn"
-                    onclick="createBlock()">
-
-                🔒 Блокирай
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= PITCH MODAL ================= -->
-
-<div id="pitchModal"
-     class="modal">
-
-    <div class="modal-content small">
-
-        <div class="modal-header">
-
-            <h2 id="pitchModalTitle">
-                ➕ Добави игрище
-            </h2>
-
-            <button class="close-btn"
-                    onclick="closePitchModal()">
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Име на игрището
-            </label>
-
-            <input type="text"
-                   id="pitchName"
-                   placeholder="Например: Игрище 1">
-
-        </div>
-
-
-        <div class="modal-actions">
-
-            <button class="secondary-btn"
-                    onclick="closePitchModal()">
-
-                Откажи
-
-            </button>
-
-            <button class="primary-btn"
-                    onclick="savePitch()">
-
-                💾 Запази
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
+<!-- ВАЖНО: Admin е в един JS файл -->
 <script src="admin.js"></script>
 
 </body>
