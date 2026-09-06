@@ -13,44 +13,137 @@ public class PitchService {
         this.pitchRepository = pitchRepository;
     }
 
+
+    // ==========================================
+    // ACTIVE PITCHES
+    // ==========================================
+
     public List<Pitch> getAllPitches() {
         return pitchRepository.findByActiveTrue();
     }
+
+
+    // ==========================================
+    // ALL PITCHES - ADMIN
+    // ==========================================
 
     public List<Pitch> getAllPitchesForAdmin() {
         return pitchRepository.findAll();
     }
 
+
+    // ==========================================
+    // GET BY ID
+    // ==========================================
+
     public Pitch getPitchById(Long id) {
+
         return pitchRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pitch not found"));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Pitch not found."
+                        )
+                );
     }
+
+
+    // ==========================================
+    // CREATE
+    // ==========================================
 
     public Pitch createPitch(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Pitch name cannot be empty");
-        }
 
-        Pitch pitch = new Pitch(name.trim());
+        validateName(name);
 
-        return pitchRepository.save(pitch);
-    }
-
-    public Pitch updatePitch(Long id, String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Pitch name cannot be empty");
-        }
-
-        Pitch pitch = getPitchById(id);
-        pitch.setName(name.trim());
+        Pitch pitch =
+                new Pitch(name.trim());
 
         return pitchRepository.save(pitch);
     }
 
-    public void deletePitch(Long id) {
-        Pitch pitch = getPitchById(id);
+
+    // ==========================================
+    // UPDATE NAME
+    // ==========================================
+
+    public Pitch updatePitch(
+            Long id,
+            String name
+    ) {
+
+        validateName(name);
+
+        Pitch pitch =
+                getPitchById(id);
+
+        pitch.setName(
+                name.trim()
+        );
+
+        return pitchRepository.save(
+                pitch
+        );
+    }
+
+
+    // ==========================================
+    // DEACTIVATE
+    // ==========================================
+
+    public Pitch deactivatePitch(
+            Long id
+    ) {
+
+        Pitch pitch =
+                getPitchById(id);
+
         pitch.setActive(false);
 
-        pitchRepository.save(pitch);
+        return pitchRepository.save(
+                pitch
+        );
     }
+
+
+    // ==========================================
+    // ACTIVATE
+    // ==========================================
+
+    public Pitch activatePitch(
+            Long id
+    ) {
+
+        Pitch pitch =
+                getPitchById(id);
+
+        pitch.setActive(true);
+
+        return pitchRepository.save(
+                pitch
+        );
+    }
+
+
+    // ==========================================
+    // VALIDATE NAME
+    // ==========================================
+
+    private void validateName(
+            String name
+    ) {
+
+        if (
+                name == null
+                        ||
+                        name.trim().isEmpty()
+        ) {
+
+            throw new IllegalArgumentException(
+                    "Pitch name cannot be empty."
+            );
+
+        }
+
+    }
+
 }

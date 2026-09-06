@@ -16,37 +16,105 @@ public class PitchController {
         this.pitchService = pitchService;
     }
 
+
+    // ==========================================
+    // ACTIVE PITCHES - PUBLIC
+    // ==========================================
+
     @GetMapping
     public List<Pitch> getAllPitches() {
+
         return pitchService.getAllPitches();
-    }
-    @GetMapping("/admin")
-    public List<Pitch> getAllPitchesForAdmin() {
-        return pitchService.getAllPitchesForAdmin();
+
     }
 
-    @GetMapping("/{id}")
-    public Pitch getPitchById(@PathVariable Long id) {
-        return pitchService.getPitchById(id);
+
+    // ==========================================
+    // ALL PITCHES - ADMIN
+    // ==========================================
+
+    @GetMapping("/admin")
+    public List<Pitch> getAllPitchesForAdmin() {
+
+        return pitchService.getAllPitchesForAdmin();
+
     }
+
+
+    // ==========================================
+    // GET PITCH BY ID
+    // ==========================================
+
+    @GetMapping("/{id}")
+    public Pitch getPitchById(
+            @PathVariable Long id
+    ) {
+
+        return pitchService.getPitchById(id);
+
+    }
+
+
+    // ==========================================
+    // CREATE PITCH
+    // ==========================================
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Pitch createPitch(@RequestBody CreatePitchRequest request) {
-        return pitchService.createPitch(request.getName());
+    public Pitch createPitch(
+            @RequestBody CreatePitchRequest request
+    ) {
+
+        return pitchService.createPitch(
+                request.getName()
+        );
+
     }
+
+
+    // ==========================================
+    // UPDATE PITCH NAME
+    // ==========================================
 
     @PutMapping("/{id}")
     public Pitch updatePitch(
             @PathVariable Long id,
             @RequestParam String name
     ) {
-        return pitchService.updatePitch(id, name);
+
+        return pitchService.updatePitch(
+                id,
+                name
+        );
+
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePitch(@PathVariable Long id) {
-        pitchService.deletePitch(id);
+
+    // ==========================================
+    // DEACTIVATE PITCH
+    // ==========================================
+
+    @PutMapping("/{id}/deactivate")
+    public Pitch deactivatePitch(
+            @PathVariable Long id
+    ) {
+
+        return pitchService.deactivatePitch(id);
+
     }
+
+
+    // ==========================================
+    // ACTIVATE PITCH
+    // ==========================================
+
+    @PutMapping("/{id}/activate")
+    public Pitch activatePitch(
+            @PathVariable Long id
+    ) {
+
+        return pitchService.activatePitch(id);
+
+    }
+
 }

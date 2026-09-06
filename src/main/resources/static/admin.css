@@ -1,0 +1,522 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #17202a;
+}
+
+.topbar {
+    height: 70px;
+    background: #111827;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 35px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.admin-info {
+    font-size: 13px;
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    margin: 0 0 7px;
+    font-size: 30px;
+}
+
+.page-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.today-box {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.06);
+    text-align: center;
+}
+
+.today-box span {
+    display: block;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.today-box strong {
+    display: block;
+    margin-top: 5px;
+}
+
+.panel {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 18px rgba(0,0,0,.06);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.panel-header h2 {
+    margin: 0 0 5px;
+}
+
+.panel-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.pitch-day-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.pitch-day-card h3 {
+    margin: 0 0 15px;
+}
+
+.time-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.time-row:last-child {
+    border-bottom: none;
+}
+
+.time {
+    font-weight: bold;
+}
+
+.status {
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 9px;
+    border-radius: 20px;
+}
+
+.status.free {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status.busy {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status.blocked {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: #eef2f7;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.calendar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.calendar-day-name {
+    padding: 12px;
+    background: #f8fafc;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.calendar-day {
+    min-height: 100px;
+    border-top: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    padding: 10px;
+    cursor: pointer;
+    transition: .15s;
+}
+
+.calendar-day:hover {
+    background: #f8fafc;
+}
+
+.calendar-day.empty {
+    background: #fafafa;
+    cursor: default;
+}
+
+.calendar-day.today {
+    outline: 2px solid #111827;
+    outline-offset: -2px;
+}
+
+.calendar-day.selected {
+    background: #eef2ff;
+}
+
+.day-number {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.day-count {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.calendar-reservations {
+    margin-top: 25px;
+}
+
+.reservation-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.reservation-card:hover {
+    background: #f8fafc;
+}
+
+.reservation-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.reservation-time {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.reservation-name {
+    font-weight: bold;
+}
+
+.reservation-meta {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+input,
+select {
+    height: 43px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}
+
+button {
+    font-family: inherit;
+}
+
+.primary-btn,
+.secondary-btn,
+.warning-btn,
+.danger-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.primary-btn {
+    background: #111827;
+    color: white;
+}
+
+.secondary-btn {
+    background: #eef2f7;
+    color: #17202a;
+}
+
+.warning-btn {
+    background: #f59e0b;
+    color: white;
+}
+
+.danger-btn {
+    background: #dc2626;
+    color: white;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.warning-btn:hover,
+.danger-btn:hover {
+    opacity: .85;
+}
+
+.available-pitches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.available-pitch {
+    padding: 18px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.available-pitch.free {
+    background: #f0fdf4;
+}
+
+.available-pitch.busy {
+    background: #fef2f2;
+}
+
+.available-pitch.blocked {
+    background: #fffbeb;
+}
+
+.pitch-list {
+    display: grid;
+    gap: 12px;
+}
+
+.pitch-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.pitch-name {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.pitch-status {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.pitch-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.loading {
+    color: #6b7280;
+    padding: 20px 0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.modal-content.small {
+    max-width: 450px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.close-btn {
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.reservation-details {
+    display: grid;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 8px;
+}
+
+.detail-label {
+    color: #6b7280;
+}
+
+.detail-value {
+    font-weight: bold;
+}
+
+@media (max-width: 800px) {
+
+    .container {
+        padding: 15px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        gap: 15px;
+        flex-direction: column;
+    }
+
+    .search-form {
+        grid-template-columns: 1fr;
+    }
+
+    .calendar-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calendar-day {
+        min-height: 70px;
+        padding: 6px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pitch-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .pitch-actions {
+        flex-wrap: wrap;
+    }
+}

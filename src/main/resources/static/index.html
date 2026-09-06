@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        FootballXtreme - Резервация
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="topbar">
+
+    <div class="logo">
+        FootballXtreme
+    </div>
+
+    <div class="topbar-right">
+        РЕЗЕРВАЦИИ
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>
+            Резервирай футболно игрище
+        </h1>
+
+        <p>
+            Избери игрище, дата и удобен час.
+        </p>
+
+    </section>
+
+
+
+    <!-- BOOKING -->
+
+    <section class="booking-card">
+
+
+        <!-- PITCH -->
+
+        <div class="form-group">
+
+            <label for="pitch">
+                ⚽ Игрище
+            </label>
+
+            <select id="pitch">
+
+                <option value="">
+                    Зареждане...
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- DATE -->
+
+        <div class="form-group">
+
+            <label for="date">
+                📅 Дата
+            </label>
+
+            <input
+                    type="date"
+                    id="date"
+            >
+
+        </div>
+
+
+
+        <!-- DURATION -->
+
+        <div class="form-group">
+
+            <label for="duration">
+                ⏱️ Продължителност
+            </label>
+
+            <select id="duration">
+
+                <option value="60">
+                    60 минути
+                </option>
+
+                <option value="90">
+                    90 минути
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- AVAILABLE HOURS -->
+
+        <div class="hours-section">
+
+            <h2>
+                Свободни часове
+            </h2>
+
+            <p class="hint">
+                Избери дата и игрище,
+                за да видиш свободните часове.
+            </p>
+
+            <div
+                    id="hours"
+                    class="hours-grid"
+            >
+            </div>
+
+        </div>
+
+
+
+        <!-- CUSTOMER -->
+
+        <div
+                id="customerForm"
+                class="customer-form hidden"
+        >
+
+            <h2>
+                Данни за резервацията
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="customerName">
+                    Име
+                </label>
+
+                <input
+                        type="text"
+                        id="customerName"
+                        placeholder="Вашето име"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="customerPhone">
+                    Телефон
+                </label>
+
+                <input
+                        type="tel"
+                        id="customerPhone"
+                        placeholder="Вашият телефон"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="customerEmail">
+                    Email
+                </label>
+
+                <input
+                        type="email"
+                        id="customerEmail"
+                        placeholder="Вашият email"
+                >
+
+            </div>
+
+
+            <div
+                    id="selectedTime"
+                    class="selected-time"
+            >
+            </div>
+
+
+            <button
+                    id="reserveButton"
+                    onclick="createReservation()"
+            >
+                ⚽ РЕЗЕРВИРАЙ
+            </button>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+                id="message"
+                class="message"
+        >
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<script src="app.js"></script>
+
+</body>
+
+</html>
