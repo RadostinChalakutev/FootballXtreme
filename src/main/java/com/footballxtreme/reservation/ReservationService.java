@@ -3,6 +3,8 @@ package com.footballxtreme.reservation;
 import com.footballxtreme.pitch.Pitch;
 import com.footballxtreme.pitch.PitchRepository;
 import org.springframework.stereotype.Service;
+import com.footballxtreme.settings.BlockedTime;
+import com.footballxtreme.settings.BlockedTimeRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -13,13 +15,16 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final PitchRepository pitchRepository;
+    private final BlockedTimeRepository blockedTimeRepository;
 
     public ReservationService(
             ReservationRepository reservationRepository,
-            PitchRepository pitchRepository
+            PitchRepository pitchRepository,
+            BlockedTimeRepository blockedTimeRepository
     ) {
         this.reservationRepository = reservationRepository;
         this.pitchRepository = pitchRepository;
+        this.blockedTimeRepository = blockedTimeRepository;
     }
 
     public List<Reservation> getAllReservations() {
@@ -78,6 +83,24 @@ public class ReservationService {
                         date,
                         ReservationStatus.CONFIRMED
                 );
+        List<BlockedTime> blockedTimes =
+                blockedTimeRepository.findByPitchAndDate(
+                        pitchId,
+                        date
+                );
+
+        for (BlockedTime blocked : blockedTimes) {
+
+            boolean overlaps =
+                    startTime.isBefore(blocked.getEndTime())
+                            && endTime.isAfter(blocked.getStartTime());
+
+            if (overlaps) {
+                throw new IllegalArgumentException(
+                        "This pitch is blocked for the selected time."
+                );
+            }
+        }
 
         for (Reservation existing : existingReservations) {
 

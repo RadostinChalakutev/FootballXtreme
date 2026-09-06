@@ -1,5 +1,6 @@
 package com.footballxtreme.settings;
 
+import com.footballxtreme.pitch.Pitch;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -12,6 +13,10 @@ public class BlockedTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "pitch_id")
+    private Pitch pitch;
 
     @Column(nullable = false)
     private LocalDate date;
@@ -29,11 +34,13 @@ public class BlockedTime {
     }
 
     public BlockedTime(
+            Pitch pitch,
             LocalDate date,
             LocalTime startTime,
             LocalTime endTime,
             String reason
     ) {
+        this.pitch = pitch;
         this.date = date;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -42,6 +49,14 @@ public class BlockedTime {
 
     public Long getId() {
         return id;
+    }
+
+    public Pitch getPitch() {
+        return pitch;
+    }
+
+    public void setPitch(Pitch pitch) {
+        this.pitch = pitch;
     }
 
     public LocalDate getDate() {
