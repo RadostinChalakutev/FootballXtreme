@@ -20,37 +20,31 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-
-    // ==========================================
-    // ALL RESERVATIONS
-    // ==========================================
+    // =========================================================
+    // ВСИЧКИ РЕЗЕРВАЦИИ
+    // =========================================================
 
     @GetMapping
     public List<Reservation> getAllReservations() {
 
         return reservationService.getAllReservations();
-
     }
 
-
-    // ==========================================
-    // RESERVATIONS FOR DATE
-    // ==========================================
+    // =========================================================
+    // РЕЗЕРВАЦИИ ЗА ОПРЕДЕЛЕНА ДАТА
+    // =========================================================
 
     @GetMapping("/date/{date}")
     public List<Reservation> getReservationsForDate(
             @PathVariable LocalDate date
     ) {
 
-        return reservationService
-                .getReservationsForDate(date);
-
+        return reservationService.getReservationsForDate(date);
     }
 
-
-    // ==========================================
-    // RESERVATIONS FOR PITCH + DATE
-    // ==========================================
+    // =========================================================
+    // РЕЗЕРВАЦИИ ЗА ИГРИЩЕ + ДАТА
+    // =========================================================
 
     @GetMapping("/pitch/{pitchId}")
     public List<Reservation> getReservationsForPitchAndDate(
@@ -58,18 +52,15 @@ public class ReservationController {
             @RequestParam LocalDate date
     ) {
 
-        return reservationService
-                .getReservationsForPitchAndDate(
-                        pitchId,
-                        date
-                );
-
+        return reservationService.getReservationsForPitchAndDate(
+                pitchId,
+                date
+        );
     }
 
-
-    // ==========================================
-    // CREATE RESERVATION
-    // ==========================================
+    // =========================================================
+    // СЪЗДАВАНЕ НА РЕЗЕРВАЦИЯ
+    // =========================================================
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -86,37 +77,11 @@ public class ReservationController {
                 request.getCustomerEmail(),
                 request.getCustomerPhone()
         );
-
     }
 
-
-    // ==========================================
-    // UPDATE RESERVATION
-    // ==========================================
-
-    @PutMapping("/{id}")
-    public Reservation updateReservation(
-            @PathVariable Long id,
-            @Valid @RequestBody CreateReservationRequest request
-    ) {
-
-        return reservationService.updateReservation(
-                id,
-                request.getPitchId(),
-                request.getDate(),
-                request.getStartTime(),
-                request.getDurationMinutes(),
-                request.getCustomerName(),
-                request.getCustomerEmail(),
-                request.getCustomerPhone()
-        );
-
-    }
-
-
-    // ==========================================
-    // CANCEL RESERVATION
-    // ==========================================
+    // =========================================================
+    // CANCEL НА РЕЗЕРВАЦИЯ
+    // =========================================================
 
     @PutMapping("/{id}/cancel")
     public Reservation cancelReservation(
@@ -124,22 +89,5 @@ public class ReservationController {
     ) {
 
         return reservationService.cancelReservation(id);
-
     }
-
-
-    // ==========================================
-    // DELETE RESERVATION
-    // ==========================================
-
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteReservation(
-            @PathVariable Long id
-    ) {
-
-        reservationService.deleteReservation(id);
-
-    }
-
 }
