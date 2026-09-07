@@ -1,4 +1,8 @@
-const API = "http://localhost:8080";
+const API =
+    window.location.protocol === "file:"
+        ? "http://localhost:8080"
+        : `${window.location.origin}`;
+
 
 /* =========================
    STATE
@@ -767,114 +771,177 @@ async function createReservation() {
         !selectedDate ||
         !selectedStartTime
     ) {
+
         showMessage(
             "Моля, избери игрище, дата и час.",
             "error"
         );
+
         return;
+
     }
 
+
     const customerName =
-        document.getElementById("customerName").value.trim();
+        document.getElementById(
+            "customerName"
+        ).value.trim();
+
 
     const customerPhone =
-        document.getElementById("customerPhone").value.trim();
+        document.getElementById(
+            "customerPhone"
+        ).value.trim();
+
 
     const customerEmail =
-        document.getElementById("customerEmail").value.trim();
+        document.getElementById(
+            "customerEmail"
+        ).value.trim();
+
 
     if (!customerName) {
+
         showMessage(
             "Моля, въведи име.",
             "error"
         );
+
         return;
+
     }
 
+
     if (!customerPhone) {
+
         showMessage(
             "Моля, въведи телефон.",
             "error"
         );
+
         return;
+
     }
 
+
     if (!customerEmail) {
+
         showMessage(
             "Моля, въведи email.",
             "error"
         );
+
         return;
+
     }
 
+
     const reservationData = {
-        pitchId: selectedPitchId,
-        date: selectedDate,
-        startTime: selectedStartTime,
-        durationMinutes: selectedDuration,
-        customerName: customerName,
-        customerEmail: customerEmail,
-        customerPhone: customerPhone
+
+        pitchId:
+        selectedPitchId,
+
+        date:
+        selectedDate,
+
+        startTime:
+        selectedStartTime,
+
+        durationMinutes:
+        selectedDuration,
+
+        customerName:
+        customerName,
+
+        customerEmail:
+        customerEmail,
+
+        customerPhone:
+        customerPhone
+
     };
 
+
     const button =
-        document.getElementById("reserveButton");
+        document.getElementById(
+            "reserveButton"
+        );
+
 
     button.disabled = true;
-    button.textContent = "Резервиране...";
+
+    button.textContent =
+        "Резервиране...";
+
 
     try {
 
-        const response = await fetch(
-            `${API}/api/reservations`,
-            {
-                method: "POST",
+        const response =
+            await fetch(
+                `${API}/api/reservations`,
+                {
+                    method: "POST",
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body: JSON.stringify(
-                    reservationData
-                )
-            }
-        );
+                    body:
+                        JSON.stringify(
+                            reservationData
+                        )
+                }
+            );
+
 
         if (!response.ok) {
 
             const text =
                 await response.text();
 
+
             throw new Error(
-                text || `HTTP ${response.status}`
+                text ||
+                `HTTP ${response.status}`
             );
+
         }
+
 
         const reservation =
             await response.json();
+
 
         showMessage(
             `Резервацията е успешна! Номер: #${reservation.id}`,
             "success"
         );
 
+
         selectedStartTime = null;
+
 
         hideCustomerForm();
 
+
         await loadAvailability();
+
 
         document.getElementById(
             "customerName"
         ).value = "";
 
+
         document.getElementById(
             "customerPhone"
         ).value = "";
 
+
         document.getElementById(
             "customerEmail"
         ).value = "";
+
 
     } catch (error) {
 
@@ -883,18 +950,24 @@ async function createReservation() {
             error
         );
 
+
         showMessage(
             `Резервацията не беше направена: ${error.message}`,
             "error"
         );
 
+
     } finally {
 
         button.disabled = false;
-        button.textContent = "⚽ РЕЗЕРВИРАЙ";
+
+        button.textContent =
+            "⚽ РЕЗЕРВИРАЙ";
 
     }
+
 }
+
 
 /* =========================
    TIME HELPERS
@@ -903,7 +976,9 @@ async function createReservation() {
 function timeToMinutes(time) {
 
     if (!time) {
+
         return 0;
+
     }
 
 
