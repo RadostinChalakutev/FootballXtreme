@@ -3,6 +3,7 @@ const API =
         ? "http://localhost:8080"
         : `${window.location.origin}`;
 
+let clientConfig = null;
 
 /* =========================
    STATE
@@ -26,11 +27,133 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setMinimumDate();
 
+    await loadClientConfig();
     await loadPitches();
 
     setupEventListeners();
-
 });
+
+
+/* =========================
+   CLIENT CONFIG
+   ========================= */
+
+async function loadClientConfig() {
+
+    try {
+
+        const response =
+            await fetch(`${API}/api/config`);
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+        clientConfig =
+            await response.json();
+
+        console.log(
+            "Client configuration loaded:",
+            clientConfig
+        );
+
+        applyClientConfig();
+
+    } catch (error) {
+
+        console.error(
+            "Client configuration error:",
+            error
+        );
+
+        showMessage(
+            "Неуспешно зареждане на конфигурацията.",
+            "error"
+        );
+    }
+}
+
+
+/* =========================
+   APPLY CLIENT CONFIG
+   ========================= */
+
+function applyClientConfig() {
+
+    if (!clientConfig) {
+        return;
+    }
+
+    /*
+     * Browser title
+     */
+    document.title =
+        `${clientConfig.name} - Резервация`;
+
+
+    /*
+     * Logo
+     */
+    const logo =
+        document.querySelector(".logo");
+
+    if (logo && clientConfig.name) {
+
+        logo.textContent =
+            clientConfig.name;
+    }
+
+
+    /*
+     * Phone
+     */
+    const phoneElements =
+        document.querySelectorAll(
+            "[data-client-phone]"
+        );
+
+    phoneElements.forEach(element => {
+
+        element.textContent =
+            clientConfig.phone || "";
+
+    });
+
+
+    /*
+     * Email
+     */
+    const emailElements =
+        document.querySelectorAll(
+            "[data-client-email]"
+        );
+
+    emailElements.forEach(element => {
+
+        element.textContent =
+            clientConfig.email || "";
+
+    });
+
+
+    /*
+     * Address
+     */
+    const addressElements =
+        document.querySelectorAll(
+            "[data-client-address]"
+        );
+
+    addressElements.forEach(element => {
+
+        element.textContent =
+            clientConfig.address || "";
+
+    });
+}
 
 
 /* =========================
@@ -63,7 +186,6 @@ function setupEventListeners() {
             hideCustomerForm();
 
             await loadAvailability();
-
         }
     );
 
@@ -80,7 +202,6 @@ function setupEventListeners() {
             hideCustomerForm();
 
             await loadAvailability();
-
         }
     );
 
@@ -97,7 +218,6 @@ function setupEventListeners() {
             hideCustomerForm();
 
             await loadAvailability();
-
         }
     );
 
@@ -258,6 +378,7 @@ async function loadReservations() {
             error
         );
 
+
         reservations = [];
 
     }
@@ -279,7 +400,6 @@ async function loadBlockedTimes() {
         blockedTimes = [];
 
         return;
-
     }
 
 
@@ -310,6 +430,7 @@ async function loadBlockedTimes() {
             "Blocked times loading error:",
             error
         );
+
 
         blockedTimes = [];
 
@@ -342,7 +463,6 @@ async function loadAvailability() {
         `;
 
         return;
-
     }
 
 
@@ -438,8 +558,10 @@ function renderHours() {
                 "busy"
             );
 
+
             button.disabled =
                 true;
+
 
             button.title =
                 "Часът е зает";
@@ -453,8 +575,10 @@ function renderHours() {
                 "blocked"
             );
 
+
             button.disabled =
                 true;
+
 
             button.title =
                 "Часът е блокиран";
@@ -531,7 +655,6 @@ function getHourStatus(startTime) {
                 ) {
 
                     return false;
-
                 }
 
 
@@ -541,7 +664,6 @@ function getHourStatus(startTime) {
                 ) {
 
                     return false;
-
                 }
 
 
@@ -551,7 +673,6 @@ function getHourStatus(startTime) {
                 ) {
 
                     return false;
-
                 }
 
 
@@ -778,7 +899,6 @@ async function createReservation() {
         );
 
         return;
-
     }
 
 
@@ -858,7 +978,6 @@ async function createReservation() {
 
         customerPhone:
         customerPhone
-
     };
 
 
@@ -868,7 +987,9 @@ async function createReservation() {
         );
 
 
-    button.disabled = true;
+    button.disabled =
+        true;
+
 
     button.textContent =
         "Резервиране...";
@@ -880,17 +1001,22 @@ async function createReservation() {
             await fetch(
                 `${API}/api/reservations`,
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json"
+
                     },
 
                     body:
                         JSON.stringify(
                             reservationData
                         )
+
                 }
             );
 
@@ -919,7 +1045,8 @@ async function createReservation() {
         );
 
 
-        selectedStartTime = null;
+        selectedStartTime =
+            null;
 
 
         hideCustomerForm();
@@ -959,7 +1086,9 @@ async function createReservation() {
 
     } finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
+
 
         button.textContent =
             "⚽ РЕЗЕРВИРАЙ";
@@ -983,7 +1112,8 @@ function timeToMinutes(time) {
 
 
     const parts =
-        time.substring(0, 5)
+        time
+            .substring(0, 5)
             .split(":");
 
 
