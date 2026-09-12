@@ -7,8 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,71 +27,55 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // =========================
-                        // PUBLIC WEBSITE
-                        // =========================
+                        // =====================================
+                        // PUBLIC FILES
+                        // =====================================
 
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/style.css",
                                 "/app.js",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/admin-login.html",
+                                "/admin-login.css"
                         ).permitAll()
 
 
-                        // =========================
+                        // =====================================
+                        // PUBLIC CONFIG
+                        // =====================================
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/config"
+                        ).permitAll()
+
+
+                        // =====================================
                         // PUBLIC PITCHES
-                        // =========================
+                        // =====================================
 
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/pitches"
                         ).permitAll()
 
-
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/pitches/*"
                         ).permitAll()
 
 
-                        // =========================
-                        // ADMIN PITCHES
-                        // =========================
-
-                        .requestMatchers(
-                                "/api/pitches/admin"
-                        ).hasRole("ADMIN")
-
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/pitches"
-                        ).hasRole("ADMIN")
-
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/pitches/*"
-                        ).hasRole("ADMIN")
-
-
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/pitches/*"
-                        ).hasRole("ADMIN")
-
-
-                        // =========================
+                        // =====================================
                         // PUBLIC BLOCKED TIMES
-                        // =========================
+                        // Клиентът трябва да ги вижда
+                        // =====================================
 
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/blocked-times"
                         ).permitAll()
-
 
                         .requestMatchers(
                                 HttpMethod.GET,
@@ -99,21 +83,64 @@ public class SecurityConfig {
                         ).permitAll()
 
 
-                        // =========================
+                        // =====================================
+                        // PUBLIC RESERVATIONS
+                        // =====================================
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/reservations"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/reservations/*/cancel"
+                        ).permitAll()
+
+
+                        // =====================================
+                        // PUBLIC AVAILABILITY
+                        // =====================================
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/reservations/pitch/**"
+                        ).permitAll()
+
+
+                        // =====================================
+                        // ADMIN PITCHES
+                        // =====================================
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/pitches/admin"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/pitches"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/pitches/*"
+                        ).hasRole("ADMIN")
+
+
+                        // =====================================
                         // ADMIN BLOCKED TIMES
-                        // =========================
+                        // =====================================
 
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/blocked-times"
                         ).hasRole("ADMIN")
 
-
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/api/blocked-times/*"
                         ).hasRole("ADMIN")
-
 
                         .requestMatchers(
                                 HttpMethod.DELETE,
@@ -121,20 +148,24 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
 
 
-                        // =========================
-                        // RESERVATIONS
-                        // =========================
+                        // =====================================
+                        // ADMIN RESERVATIONS
+                        // =====================================
 
-                        // Клиентите могат да правят резервации
                         .requestMatchers(
-                                HttpMethod.POST,
+                                HttpMethod.GET,
                                 "/api/reservations"
-                        ).permitAll()
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/reservations/date/**"
+                        ).hasRole("ADMIN")
 
 
-                        // =========================
-                        // ADMIN
-                        // =========================
+                        // =====================================
+                        // ADMIN ACTIVATE / DEACTIVATE
+                        // =====================================
 
                         .requestMatchers(
                                 HttpMethod.PUT,
@@ -147,28 +178,41 @@ public class SecurityConfig {
                         ).hasRole("ADMIN")
 
 
-                        .requestMatchers(
-                                "/api/reservations/**"
-                        ).hasRole("ADMIN")
-
-
-                        // =========================
+                        // =====================================
                         // EVERYTHING ELSE
-                        // =========================
+                        // =====================================
 
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
 
-                .httpBasic(httpBasic -> {});
 
+                // =====================================
+                // FORM LOGIN
+                // =====================================
+
+                .formLogin(form -> form
+                        .loginPage("/admin-login.html")
+                        .defaultSuccessUrl("/admin.html", true)
+                        .permitAll()
+                )
+
+
+                // =====================================
+                // LOGOUT
+                // =====================================
+
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/admin-login.html")
+                        .permitAll()
+                );
 
         return http.build();
     }
 
 
-    // =========================
+    // =====================================
     // ADMIN USER
-    // =========================
+    // =====================================
 
     @Bean
     public UserDetailsService userDetailsService(
@@ -184,22 +228,19 @@ public class SecurityConfig {
                         .roles("ADMIN")
                         .build();
 
-
         return new InMemoryUserDetailsManager(
                 admin
         );
     }
 
 
-    // =========================
+    // =====================================
     // PASSWORD ENCODER
-    // =========================
+    // =====================================
 
     @Bean
     public PasswordEncoder passwordEncoder() {
 
         return new BCryptPasswordEncoder();
-
     }
-
 }

@@ -845,9 +845,49 @@ button {
 
     .blocked-slot-status {
         font-size: 11px;
+
     }
 
     .today-box {
         width: 100%;
+    }
+}
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-btn {
+    border: 1px solid #374151;
+    background: #111827;
+    color: #ffffff;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #1f2937;
+}
+
+@media (max-width: 650px) {
+    .topbar-right {
+        gap: 8px;
+    }
+
+    .admin-info {
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 8px 11px;
+        font-size: 12px;
     }
 }

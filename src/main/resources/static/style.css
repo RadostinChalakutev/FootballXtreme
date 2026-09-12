@@ -2,11 +2,17 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
     background: #f4f6f8;
     color: #1f2937;
+
+    -webkit-font-smoothing: antialiased;
 }
 
 
@@ -64,6 +70,7 @@ body {
     margin: 0 0 10px;
 
     font-size: 36px;
+    line-height: 1.15;
     font-weight: 800;
 }
 
@@ -72,6 +79,7 @@ body {
 
     color: #6b7280;
     font-size: 17px;
+    line-height: 1.5;
 }
 
 
@@ -124,11 +132,18 @@ body {
     font-size: 15px;
 
     outline: none;
+
+    transition:
+            border-color 0.15s,
+            box-shadow 0.15s;
 }
 
 .form-group input:focus,
 .form-group select:focus {
     border-color: #111827;
+
+    box-shadow:
+            0 0 0 3px rgba(17, 24, 39, 0.08);
 }
 
 
@@ -152,6 +167,7 @@ body {
 
     color: #6b7280;
     font-size: 14px;
+    line-height: 1.5;
 }
 
 .hours-grid {
@@ -184,7 +200,8 @@ body {
 
     transition:
             transform 0.15s,
-            opacity 0.15s;
+            opacity 0.15s,
+            box-shadow 0.15s;
 }
 
 .hour-button:hover {
@@ -199,12 +216,20 @@ body {
     color: #166534;
 }
 
+.hour-button.available:hover {
+    box-shadow:
+            0 4px 12px rgba(22, 101, 52, 0.12);
+}
+
 
 /* SELECTED */
 
 .hour-button.selected {
     background: #111827;
     color: white;
+
+    box-shadow:
+            0 4px 12px rgba(17, 24, 39, 0.15);
 }
 
 
@@ -262,6 +287,8 @@ body {
 
     font-size: 15px;
     font-weight: 700;
+
+    line-height: 1.6;
 }
 
 
@@ -287,12 +314,49 @@ body {
 
     transition:
             transform 0.15s,
-            opacity 0.15s;
+            opacity 0.15s,
+            box-shadow 0.15s;
 }
 
 #reserveButton:hover {
     transform: translateY(-2px);
     opacity: 0.92;
+
+    box-shadow:
+            0 6px 16px rgba(17, 24, 39, 0.15);
+}
+
+#reserveButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* =========================
+   CLIENT CONTACT
+   ========================= */
+
+.client-contact {
+    margin-top: 30px;
+    padding-top: 20px;
+
+    border-top: 1px solid #e5e7eb;
+
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+
+    text-align: center;
+}
+
+.client-contact:empty {
+    display: none;
 }
 
 
@@ -308,6 +372,7 @@ body {
     border-radius: 8px;
 
     font-size: 14px;
+    line-height: 1.5;
 
     display: none;
 }
@@ -332,7 +397,33 @@ body {
    ========================= */
 
 .hidden {
-    display: none;
+    display: none !important;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 850px) {
+
+    .container {
+        width: min(
+                100% - 24px,
+                700px
+        );
+
+        padding: 35px 0;
+    }
+
+    .booking-card {
+        padding: 28px;
+    }
+
+    .hours-grid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
 }
 
 
@@ -342,41 +433,251 @@ body {
 
 @media (max-width: 700px) {
 
+    body {
+        background: #f4f6f8;
+    }
+
+
+    /* TOPBAR */
+
     .topbar {
-        padding: 0 20px;
+        min-height: 62px;
+
+        padding: 0 16px;
     }
 
     .logo {
-        font-size: 20px;
+        font-size: 19px;
     }
 
     .topbar-right {
-        font-size: 11px;
+        font-size: 10px;
+        letter-spacing: 0.7px;
     }
 
-    .container {
-        width: min(
-                100% - 20px,
-                600px
-        );
 
-        padding: 30px 0;
+    /* CONTAINER */
+
+    .container {
+        width: 100%;
+
+        padding: 22px 10px 30px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        margin-bottom: 20px;
+
+        padding: 0 8px;
     }
 
     .hero h1 {
-        font-size: 28px;
+        font-size: 27px;
+        line-height: 1.18;
     }
 
     .hero p {
-        font-size: 15px;
+        font-size: 14px;
+        line-height: 1.45;
     }
 
+
+    /* BOOKING CARD */
+
     .booking-card {
-        padding: 22px;
+        width: 100%;
+
+        padding: 18px 15px;
+
+        border-radius: 12px;
+
+        box-shadow:
+                0 5px 18px rgba(0, 0, 0, 0.07);
+    }
+
+
+    /* FORM */
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        margin-bottom: 7px;
+
+        font-size: 13px;
+    }
+
+    .form-group input,
+    .form-group select {
+        height: 50px;
+
+        padding: 0 12px;
+
+        border-radius: 9px;
+
+        font-size: 16px;
+    }
+
+
+    /* HOURS */
+
+    .hours-section {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    .hours-section h2 {
+        font-size: 20px;
+    }
+
+    .hint {
+        margin-bottom: 16px;
+
+        font-size: 13px;
     }
 
     .hours-grid {
         grid-template-columns:
             repeat(2, 1fr);
+
+        gap: 9px;
+    }
+
+
+    /* HOUR BUTTON */
+
+    .hour-button {
+        min-height: 52px;
+
+        border-radius: 9px;
+
+        font-size: 15px;
+
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .hour-button:hover {
+        transform: none;
+    }
+
+    .hour-button:active {
+        transform: scale(0.98);
+    }
+
+
+    /* CUSTOMER FORM */
+
+    .customer-form {
+        margin-top: 28px;
+
+        padding-top: 24px;
+    }
+
+    .customer-form h2 {
+        margin-bottom: 20px;
+
+        font-size: 20px;
+    }
+
+
+    /* SELECTED TIME */
+
+    .selected-time {
+        margin: 16px 0;
+
+        padding: 13px;
+
+        font-size: 14px;
+    }
+
+
+    /* BUTTON */
+
+    #reserveButton {
+        min-height: 54px;
+
+        border-radius: 9px;
+
+        font-size: 16px;
+
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #reserveButton:hover {
+        transform: none;
+    }
+
+    #reserveButton:active {
+        transform: scale(0.99);
+    }
+
+
+    /* MESSAGE */
+
+    .message {
+        margin-top: 16px;
+
+        padding: 13px;
+
+        font-size: 13px;
+    }
+
+
+    /* CONTACT */
+
+    .client-contact {
+        margin-top: 24px;
+        padding-top: 18px;
+
+        font-size: 13px;
+    }
+}
+
+
+/* =========================
+   SMALL PHONES
+   ========================= */
+
+@media (max-width: 380px) {
+
+    .topbar {
+        padding: 0 12px;
+    }
+
+    .logo {
+        font-size: 17px;
+    }
+
+    .topbar-right {
+        font-size: 9px;
+    }
+
+    .container {
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+    .booking-card {
+        padding: 16px 12px;
+    }
+
+    .hero h1 {
+        font-size: 24px;
+    }
+
+    .hero p {
+        font-size: 13px;
+    }
+
+    .hours-grid {
+        gap: 7px;
+    }
+
+    .hour-button {
+        min-height: 50px;
+        font-size: 14px;
     }
 }

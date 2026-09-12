@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FootballXtreme - Admin Login</title>
+
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-card">
+
+        <div class="logo">
+            <div class="logo-main">FootballXtreme</div>
+            <div class="logo-sub">ADMIN PANEL</div>
+        </div>
+
+        <div class="login-header">
+            <h1>Вход</h1>
+            <p>Влезте в административния панел.</p>
+        </div>
+
+        <form method="post" action="/login">
+
+            <div class="form-group">
+                <label for="username">Потребителско име</label>
+
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Въведете потребителско име"
+                        autocomplete="username"
+                        required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Парола</label>
+
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Въведете парола"
+                        autocomplete="current-password"
+                        required
+                >
+            </div>
+
+            <div
+                    class="login-error"
+                    id="loginError"
+                    style="display: none;"
+            >
+                Грешно потребителско име или парола.
+            </div>
+
+            <button
+                    type="submit"
+                    class="login-button"
+            >
+                Вход
+            </button>
+
+        </form>
+
+        <div class="login-footer">
+            FootballXtreme
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("error")) {
+        document.getElementById("loginError").style.display = "block";
+    }
+</script>
+
+</body>
+</html>

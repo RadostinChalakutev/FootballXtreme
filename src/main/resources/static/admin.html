@@ -10,7 +10,16 @@
 
 <header class="topbar">
     <div class="logo">FootballXtreme</div>
-    <div class="admin-info">ADMIN PANEL</div>
+
+    <div class="topbar-right">
+        <div class="admin-info">ADMIN PANEL</div>
+
+        <form method="post" action="/logout" class="logout-form">
+            <button type="submit" class="logout-btn">
+                Изход
+            </button>
+        </form>
+    </div>
 </header>
 
 <div class="admin-layout">
@@ -38,6 +47,10 @@
                 <span class="sidebar-icon">⚽</span>
                 <span>Игрища</span>
             </a>
+            <header class="topbar">
+                <div class="logo">FootballXtreme</div>
+                <div class="admin-info">ADMIN PANEL</div>
+            </header>
         </nav>
 
         <div class="sidebar-bottom">
@@ -51,10 +64,7 @@
     <main class="container">
 
         <section class="page-header">
-            <div>
-                <h1>Административен панел</h1>
-                <p>Управление на резервации, игрища и работно време.</p>
-            </div>
+
 
             <div class="today-box">
                 <span>Днес</span>
@@ -82,7 +92,7 @@
             <div class="panel-header">
                 <div>
                     <h2>Календар</h2>
-                    <p>Изберете дата и вижте всички резервации.</p>
+
                 </div>
 
                 <div class="calendar-controls">

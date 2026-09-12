@@ -484,30 +484,81 @@ async function loadAvailability() {
    ========================= */
 
 function generateHours() {
-
     const hours = [];
+    const seen = new Set();
 
+    // Стандартни почасови начала: 09:00 - 22:00
+    for (let hour = 9; hour < 23; hour++) {
+        const time = `${String(hour).padStart(2, "0")}:00`;
 
-    /*
-     * Работно време:
-     * 09:00 - 23:00
-     */
-
-    for (
-        let hour = 9;
-        hour < 23;
-        hour++
-    ) {
-
-        hours.push(
-            `${String(hour).padStart(2, "0")}:00`
-        );
-
+        hours.push(time);
+        seen.add(time);
     }
 
+    // Добавяме само реалните крайни часове на
+    // потвърдените резервации за избраното игрище и дата
+    reservations
+        .filter(reservation => {
+            if (!reservation.pitch?.id) {
+                return false;
+            }
+
+            if (Number(reservation.pitch.id) !== Number(selectedPitchId)) {
+                return false;
+            }
+
+            if (reservation.date !== selectedDate) {
+                return false;
+            }
+
+            if (reservation.status !== "CONFIRMED") {
+                return false;
+            }
+
+            return true;
+        })
+        .forEach(reservation => {
+            const startMinutes = timeToMinutes(
+                reservation.startTime
+            );
+
+            const durationMinutes = Number(
+                reservation.durationMinutes || 0
+            );
+
+            const endMinutes =
+                startMinutes + durationMinutes;
+
+            // Краят трябва да е след началото на работния ден
+            // и преди 23:00.
+            if (endMinutes <= 9 * 60) {
+                return;
+            }
+
+            if (endMinutes >= 23 * 60) {
+                return;
+            }
+
+            const endTime = addMinutesToTime(
+                reservation.startTime,
+                durationMinutes
+            );
+
+            // Добавяме само ако този час още не съществува
+            if (!seen.has(endTime)) {
+                hours.push(endTime);
+                seen.add(endTime);
+            }
+        });
+
+    // Подреждане по час
+    hours.sort(
+        (a, b) =>
+            timeToMinutes(a) -
+            timeToMinutes(b)
+    );
 
     return hours;
-
 }
 
 
