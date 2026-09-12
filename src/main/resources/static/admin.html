@@ -31,6 +31,10 @@
         </div>
 
         <nav class="sidebar-nav">
+            <a href="#searchSection" class="sidebar-link">
+                <span class="sidebar-icon">🔎</span>
+                <span>Търсене</span>
+            </a>
             <a href="#dashboardSection" class="sidebar-link active">
                 <span class="sidebar-icon">🏠</span>
                 <span>Табло</span>
@@ -150,6 +154,52 @@
             <div id="blockedTimeGrid" class="blocked-time-grid">
                 <div class="loading">Изберете игрище и дата.</div>
             </div>
+        </section>
+        <section class="panel" id="searchSection">
+
+            <div class="panel-header">
+                <div>
+                    <h2>🔎 Търсене на клиент</h2>
+                    <p>
+                        Намери всички резервации по телефонен номер.
+                    </p>
+                </div>
+            </div>
+
+            <div class="search-toolbar">
+
+                <div class="form-group">
+                    <label for="reservationSearchPhone">
+                        Телефон
+                    </label>
+
+                    <input
+                            type="text"
+                            id="reservationSearchPhone"
+                            placeholder="0888 123 456"
+                            autocomplete="off"
+                    >
+                </div>
+
+                <button
+                        class="primary-btn"
+                        type="button"
+                        id="reservationSearchButton"
+                >
+                    🔎 Търси
+                </button>
+
+            </div>
+
+            <div
+                    id="reservationSearchResults"
+                    class="search-results"
+            >
+                <div class="loading">
+                    Въведи телефонен номер за търсене.
+                </div>
+            </div>
+
         </section>
 
         <section class="panel" id="pitchesSection">

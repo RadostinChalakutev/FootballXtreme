@@ -28,4 +28,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             LocalDate date,
             ReservationStatus status
     );
+    List<Reservation> findByCustomerPhoneContainingIgnoreCaseOrderByDateDescStartTimeDesc(
+            String customerPhone
+    );
 }

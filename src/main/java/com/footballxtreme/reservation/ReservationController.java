@@ -90,4 +90,13 @@ public class ReservationController {
 
         return reservationService.cancelReservation(id);
     }
+    @GetMapping("/search")
+    public List<Reservation> searchReservationsByPhone(
+            @RequestParam String phone
+    ) {
+
+        return reservationService.searchReservationsByPhone(
+                phone
+        );
+    }
 }

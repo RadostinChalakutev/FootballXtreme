@@ -55,6 +55,22 @@ public class ReservationService {
     // =========================================================
     // CREATE RESERVATION
     // =========================================================
+    public List<Reservation> searchReservationsByPhone(
+            String phone
+    ) {
+
+        String normalizedPhone =
+                normalizePhone(phone);
+
+        if (normalizedPhone.isBlank()) {
+            return List.of();
+        }
+
+        return reservationRepository
+                .findByCustomerPhoneContainingIgnoreCaseOrderByDateDescStartTimeDesc(
+                        normalizedPhone
+                );
+    }
 
     public Reservation createReservation(
             Long pitchId,
@@ -224,7 +240,7 @@ public class ReservationService {
         );
 
         reservation.setCustomerPhone(
-                customerPhone
+                normalizePhone(customerPhone)
         );
 
         reservation.setStatus(
@@ -363,4 +379,26 @@ public class ReservationService {
                         ReservationStatus.CONFIRMED
                 );
     }
+    private String normalizePhone(String phone) {
+
+        if (phone == null) {
+            return "";
+        }
+
+        String normalized = phone
+                .replaceAll("[^0-9+]", "");
+
+        if (normalized.startsWith("+359")) {
+            normalized = "0" +
+                    normalized.substring(4);
+        }
+
+        if (normalized.startsWith("00359")) {
+            normalized = "0" +
+                    normalized.substring(5);
+        }
+
+        return normalized;
+    }
+
 }

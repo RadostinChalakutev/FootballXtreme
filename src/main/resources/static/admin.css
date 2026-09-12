@@ -891,3 +891,109 @@ button {
         font-size: 12px;
     }
 }
+.search-toolbar {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.search-toolbar .form-group {
+    flex: 1;
+    margin: 0;
+}
+
+.search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-result-card {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition:
+            background 0.2s ease,
+            border-color 0.2s ease;
+}
+
+.search-result-card:hover {
+    background: #1f2937;
+    border-color: #4b5563;
+}
+
+.search-result-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.search-result-main {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.search-result-name {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.search-result-meta {
+    color: #9ca3af;
+    font-size: 13px;
+}
+
+.search-result-time {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.search-result-status {
+    white-space: nowrap;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 9px;
+    border-radius: 999px;
+    border: 1px solid #374151;
+}
+
+.search-status-confirmed {
+    color: #86efac;
+    background: #052e16;
+    border-color: #166534;
+}
+
+.search-status-cancelled {
+    color: #fca5a5;
+    background: #450a0a;
+    border-color: #991b1b;
+}
+
+.search-empty {
+    padding: 24px;
+    text-align: center;
+    border: 1px dashed #374151;
+    border-radius: 12px;
+    color: #9ca3af;
+}
+
+@media (max-width: 650px) {
+    .search-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-result-top {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-result-status {
+        align-self: flex-start;
+    }
+}

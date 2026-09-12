@@ -18,6 +18,18 @@ const DAY_NAMES = [
 ];
 
 document.addEventListener("DOMContentLoaded", init);
+document
+    .getElementById("reservationSearchPhone")
+    ?.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Enter") {
+                searchReservationsByPhone();
+            }
+
+        }
+    );
 
 async function init() {
     setToday();
@@ -429,33 +441,193 @@ async function editPitch(id) {
     }
 }
 
-async function deactivatePitch(id) {
-    const pitch = pitches.find(
-        item => Number(item.id) === Number(id)
-    );
-
-    if (!pitch) return;
-
+async function deactivatePitch(pitchId) {
     const confirmed = confirm(
-        `Сигурни ли сте, че искате да деактивирате "${pitch.name}"?`
+        "Сигурни ли сте, че искате да деактивирате това игрище?"
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+        return;
+    }
 
     try {
-        await apiFetch(`/pitches/${id}`, {
-            method: "DELETE"
-        });
+        const response = await fetch(
+            `${API}/api/pitches/${pitchId}/deactivate`,
+            {
+                method: "PUT"
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+                errorText || "Грешка при деактивиране."
+            );
+        }
 
         await loadPitches();
-
-        renderCalendar();
-        await loadCalendar();
         await loadDashboard();
+        await loadCalendar();
 
-        alert("Игрището е деактивирано.");
+        alert("Игрището е деактивирано успешно.");
+
     } catch (error) {
-        showError(error);
+        console.error("Deactivate pitch error:", error);
+
+        alert(
+            "Грешка при деактивиране: " +
+            error.message
+        );
+    }
+}
+async function searchReservationsByPhone() {
+
+    const input =
+        document.getElementById(
+            "reservationSearchPhone"
+        );
+
+    const results =
+        document.getElementById(
+            "reservationSearchResults"
+        );
+
+    if (!input || !results) {
+        return;
+    }
+
+    const phone = input.value.trim();
+
+    if (!phone) {
+        results.innerHTML = `
+            <div class="search-empty">
+                Въведи телефонен номер.
+            </div>
+        `;
+        return;
+    }
+
+    results.innerHTML = `
+        <div class="loading">
+            Търсене...
+        </div>
+    `;
+
+    try {
+
+        const response = await apiFetch(
+            `/reservations/search?phone=${encodeURIComponent(phone)}`
+        );
+
+        if (!Array.isArray(response)) {
+            throw new Error(
+                "Невалиден отговор от сървъра."
+            );
+        }
+
+        if (response.length === 0) {
+
+            results.innerHTML = `
+                <div class="search-empty">
+                    Няма намерени резервации за този телефон.
+                </div>
+            `;
+
+            return;
+        }
+
+        results.innerHTML = `
+            <div class="search-result-count">
+                Намерени резервации: <strong>${response.length}</strong>
+            </div>
+
+            ${response
+            .map(reservation => {
+
+                const endTime =
+                    calculateEndTime(
+                        reservation.startTime,
+                        reservation.durationMinutes
+                    );
+
+                const statusClass =
+                    reservation.status === "CONFIRMED"
+                        ? "search-status-confirmed"
+                        : "search-status-cancelled";
+
+                const statusText =
+                    reservation.status === "CONFIRMED"
+                        ? "Потвърдена"
+                        : "Отменена";
+
+                return `
+                        <div
+                            class="search-result-card"
+                            data-reservation-id="${reservation.id}"
+                        >
+
+                            <div class="search-result-top">
+
+                                <div class="search-result-main">
+
+                                    <div class="search-result-name">
+                                        ${escapeHtml(
+                    reservation.customerName || "Без име"
+                )}
+                                    </div>
+
+                                    <div class="search-result-time">
+                                        ${formatDateBG(
+                    reservation.date
+                )}
+                                        ·
+                                        ${formatTime(
+                    reservation.startTime
+                )}
+                                        –
+                                        ${endTime}
+                                    </div>
+
+                                    <div class="search-result-meta">
+                                        ⚽ ${escapeHtml(
+                    reservation.pitch?.name || "Игрище"
+                )}
+                                    </div>
+
+                                    <div class="search-result-meta">
+                                        📞 ${escapeHtml(
+                    reservation.customerPhone || ""
+                )}
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="search-result-status ${statusClass}"
+                                >
+                                    ${statusText}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+            })
+            .join("")}
+        `;
+
+    } catch (error) {
+
+        console.error(
+            "Reservation search error:",
+            error
+        );
+
+        results.innerHTML = `
+            <div class="search-empty">
+                Грешка при търсенето.
+            </div>
+        `;
     }
 }
 
