@@ -202,6 +202,8 @@ public class ReservationService {
                 customerPhone
         );
 
+        // Веднага потвърждаваме резервацията.
+        // Email-ът НЕ е условие за създаване на резервацията.
         reservation.setStatus(
                 ReservationStatus.CONFIRMED
         );
@@ -227,13 +229,25 @@ public class ReservationService {
 
         } catch (Exception e) {
 
+            /*
+             * Резервацията вече е записана и CONFIRMED.
+             * Ако email услугата не работи, НЕ проваляме
+             * самата резервация.
+             */
             System.err.println(
-                    "Reservation was created, but confirmation email could not be sent."
+                    "Reservation #" +
+                            savedReservation.getId() +
+                            " was created successfully, " +
+                            "but confirmation email could not be sent."
             );
 
-            e.printStackTrace();
+            System.err.println(
+                    "Email error: " +
+                            e.getMessage()
+            );
         }
 
+        // Винаги връщаме успешно създадената резервация.
         return savedReservation;
     }
 
