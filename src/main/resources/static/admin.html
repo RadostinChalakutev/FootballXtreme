@@ -1,546 +1,198 @@
 <!DOCTYPE html>
 <html lang="bg">
-
 <head>
     <meta charset="UTF-8">
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FootballXtreme - Admin</title>
-
-    <link
-            rel="stylesheet"
-            href="admin.css"
-    >
+    <link rel="stylesheet" href="/css/admin.css">
 </head>
-
 <body>
 
 <header class="topbar">
-
-    <div class="logo">
-        FootballXtreme
-    </div>
-
-    <div class="admin-info">
-        ADMIN PANEL
-    </div>
-
+    <div class="logo">FootballXtreme</div>
+    <div class="admin-info">ADMIN PANEL</div>
 </header>
-
 
 <div class="admin-layout">
 
-    <!-- ================================================= -->
-    <!-- SIDEBAR -->
-    <!-- ================================================= -->
-
     <aside class="sidebar">
-
         <div class="sidebar-logo">
-
-            <div class="sidebar-logo-main">
-                FootballXtreme
-            </div>
-
-            <div class="sidebar-logo-sub">
-                ADMIN PANEL
-            </div>
-
+            <div class="sidebar-logo-main">FootballXtreme</div>
+            <div class="sidebar-logo-sub">ADMIN PANEL</div>
         </div>
-
 
         <nav class="sidebar-nav">
-
-            <a
-                    href="#dashboardSection"
-                    class="sidebar-link active"
-            >
-                <span class="sidebar-icon">
-                    🏠
-                </span>
-
-                <span>
-                    Табло
-                </span>
+            <a href="#dashboardSection" class="sidebar-link active">
+                <span class="sidebar-icon">🏠</span>
+                <span>Табло</span>
             </a>
-
-
-            <a
-                    href="#calendarSection"
-                    class="sidebar-link"
-            >
-                <span class="sidebar-icon">
-                    📅
-                </span>
-
-                <span>
-                    Календар
-                </span>
+            <a href="#calendarSection" class="sidebar-link">
+                <span class="sidebar-icon">📅</span>
+                <span>Календар</span>
             </a>
-
-
-            <a
-                    href="#timeManagementSection"
-                    class="sidebar-link"
-            >
-                <span class="sidebar-icon">
-                    ⏱️
-                </span>
-
-                <span>
-                    Управление на часовете
-                </span>
+            <a href="#timeManagementSection" class="sidebar-link">
+                <span class="sidebar-icon">⏱️</span>
+                <span>Управление на часовете</span>
             </a>
-
-
-            <a
-                    href="#pitchesSection"
-                    class="sidebar-link"
-            >
-                <span class="sidebar-icon">
-                    ⚽
-                </span>
-
-                <span>
-                    Игрища
-                </span>
+            <a href="#pitchesSection" class="sidebar-link">
+                <span class="sidebar-icon">⚽</span>
+                <span>Игрища</span>
             </a>
-
         </nav>
 
-
         <div class="sidebar-bottom">
-
             <div class="sidebar-status">
-
                 <span class="status-dot"></span>
-
                 Системата работи
-
             </div>
-
         </div>
-
     </aside>
-
-
-    <!-- ================================================= -->
-    <!-- MAIN CONTENT -->
-    <!-- ================================================= -->
 
     <main class="container">
 
-
-        <!-- ================================================= -->
-        <!-- PAGE HEADER -->
-        <!-- ================================================= -->
-
         <section class="page-header">
-
             <div>
-
-                <h1>
-                    Административен панел
-                </h1>
-
-                <p>
-                    Управление на резервации, игрища и работно време.
-                </p>
-
+                <h1>Административен панел</h1>
+                <p>Управление на резервации, игрища и работно време.</p>
             </div>
-
 
             <div class="today-box">
-
-                <span>
-                    Днес
-                </span>
-
-                <strong id="todayDate">
-                    -
-                </strong>
-
+                <span>Днес</span>
+                <strong id="todayDate">-</strong>
             </div>
-
         </section>
 
-
-        <!-- ================================================= -->
-        <!-- DASHBOARD -->
-        <!-- ================================================= -->
-
-        <section
-                class="panel"
-                id="dashboardSection"
-        >
-
+        <section class="panel" id="dashboardSection">
             <div class="panel-header">
-
                 <div>
-
-                    <h2>
-                        Днешни резервации
-                    </h2>
-
-                    <p>
-                        Заети, свободни и блокирани периоди за днес.
-                    </p>
-
+                    <h2>Днешни резервации</h2>
+                    <p>Заети, свободни и блокирани периоди за днес.</p>
                 </div>
-
-
-                <button
-                        class="secondary-btn"
-                        type="button"
-                        id="refreshDashboardButton"
-                >
+                <button class="secondary-btn" type="button" id="refreshDashboardButton">
                     🔄 Обнови
                 </button>
-
             </div>
 
-
-            <div
-                    id="dashboard"
-                    class="dashboard-grid"
-            >
-
-                <div class="loading">
-                    Зареждане...
-                </div>
-
+            <div id="dashboard" class="dashboard-grid">
+                <div class="loading">Зареждане...</div>
             </div>
-
         </section>
 
-
-        <!-- ================================================= -->
-        <!-- CALENDAR -->
-        <!-- ================================================= -->
-
-        <section
-                class="panel"
-                id="calendarSection"
-        >
-
+        <section class="panel" id="calendarSection">
             <div class="panel-header">
-
                 <div>
-
-                    <h2>
-                        Календар
-                    </h2>
-
-                    <p>
-                        Изберете дата и вижте всички резервации.
-                    </p>
-
+                    <h2>Календар</h2>
+                    <p>Изберете дата и вижте всички резервации.</p>
                 </div>
-
 
                 <div class="calendar-controls">
-
-                    <button
-                            class="icon-btn"
-                            id="previousMonth"
-                            type="button"
-                    >
-                        ‹
-                    </button>
-
-
-                    <strong id="calendarMonth">
-                        -
-                    </strong>
-
-
-                    <button
-                            class="icon-btn"
-                            id="nextMonth"
-                            type="button"
-                    >
-                        ›
-                    </button>
-
+                    <button class="icon-btn" id="previousMonth" type="button">‹</button>
+                    <strong id="calendarMonth">-</strong>
+                    <button class="icon-btn" id="nextMonth" type="button">›</button>
                 </div>
-
             </div>
-
 
             <div class="calendar-toolbar">
-
                 <div class="form-group">
-
-                    <label for="calendarPitch">
-                        Игрище
-                    </label>
-
-                    <select
-                            id="calendarPitch"
-                            data-pitch-selector
-                    >
-
-                        <option value="">
-                            Всички игрища
-                        </option>
-
+                    <label for="calendarPitch">Игрище</label>
+                    <select id="calendarPitch" data-pitch-selector>
+                        <option value="">Всички игрища</option>
                     </select>
-
                 </div>
-
             </div>
 
+            <div id="calendar" class="calendar"></div>
 
-            <div
-                    id="calendar"
-                    class="calendar"
-            >
-            </div>
-
-
-            <div
-                    id="selectedDateTitle"
-                    class="selected-date-title"
-            >
+            <div id="selectedDateTitle" class="selected-date-title">
                 Изберете дата
             </div>
 
-
-            <div
-                    id="calendarReservations"
-                    class="calendar-reservations"
-            >
-
-                <div class="loading">
-                    Изберете дата от календара.
-                </div>
-
+            <div id="calendarReservations" class="calendar-reservations">
+                <div class="loading">Изберете дата от календара.</div>
             </div>
-
         </section>
 
-
-        <!-- ================================================= -->
-        <!-- TIME MANAGEMENT -->
-        <!-- ================================================= -->
-
-        <section
-                class="panel"
-                id="timeManagementSection"
-        >
-
+        <section class="panel" id="timeManagementSection">
             <div class="panel-header">
-
                 <div>
-
-                    <h2>
-                        Управление на часовете
-                    </h2>
-
+                    <h2>Управление на часовете</h2>
                     <p>
-                        Часовете се генерират според Working Hours за избрания ден.
-                        Натиснете свободен час за блокиране или блокиран час за отблокиране.
+                        Изберете игрище и дата. Натиснете свободен час,
+                        за да го блокирате, или блокиран час, за да го отблокирате.
                     </p>
-
                 </div>
-
             </div>
-
 
             <div class="time-management-toolbar">
-
                 <div class="form-group">
-
-                    <label for="blockedPitch">
-                        Игрище
-                    </label>
-
-                    <select
-                            id="blockedPitch"
-                            data-pitch-selector
-                    >
-
-                        <option value="">
-                            Изберете игрище
-                        </option>
-
+                    <label for="blockedPitch">Игрище</label>
+                    <select id="blockedPitch" data-pitch-selector>
+                        <option value="">Изберете игрище</option>
                     </select>
-
                 </div>
-
 
                 <div class="form-group">
-
-                    <label for="blockedDate">
-                        Дата
-                    </label>
-
-                    <input
-                            type="date"
-                            id="blockedDate"
-                    >
-
+                    <label for="blockedDate">Дата</label>
+                    <input type="date" id="blockedDate">
                 </div>
-
             </div>
 
-
-            <div
-                    id="blockedTimeGrid"
-                    class="blocked-time-grid"
-            >
-
-                <div class="loading">
-                    Изберете игрище и дата.
-                </div>
-
+            <div id="blockedTimeGrid" class="blocked-time-grid">
+                <div class="loading">Изберете игрище и дата.</div>
             </div>
-
         </section>
 
-
-        <!-- ================================================= -->
-        <!-- PITCH MANAGEMENT -->
-        <!-- ================================================= -->
-
-        <section
-                class="panel"
-                id="pitchesSection"
-        >
-
+        <section class="panel" id="pitchesSection">
             <div class="panel-header">
-
                 <div>
-
-                    <h2>
-                        Игрища
-                    </h2>
-
-                    <p>
-                        Добавяне, преименуване и промяна на статуса на игрищата.
-                    </p>
-
+                    <h2>Игрища</h2>
+                    <p>Добавяне, преименуване и промяна на статуса на игрищата.</p>
                 </div>
-
             </div>
 
-
             <div class="add-pitch-form">
-
                 <div class="form-group">
-
-                    <label for="newPitchName">
-                        Ново игрище
-                    </label>
-
+                    <label for="newPitchName">Ново игрище</label>
                     <input
                             type="text"
                             id="newPitchName"
                             placeholder="Например: Игрище 4"
                     >
-
                 </div>
 
-
-                <button
-                        class="primary-btn"
-                        id="addPitchButton"
-                        type="button"
-                >
+                <button class="primary-btn" id="addPitchButton" type="button">
                     Добави игрище
                 </button>
-
             </div>
 
-
-            <div
-                    id="pitchList"
-                    class="pitch-list"
-            >
-
-                <div class="loading">
-                    Зареждане...
-                </div>
-
+            <div id="pitchList" class="pitch-list">
+                <div class="loading">Зареждане...</div>
             </div>
-
         </section>
 
-
-        <!-- ================================================= -->
-        <!-- RESERVATION MODAL -->
-        <!-- ================================================= -->
-
-        <div
-                id="reservationModal"
-                class="modal"
-        >
-
+        <div id="reservationModal" class="modal">
             <div class="modal-content">
-
                 <div class="modal-header">
-
-                    <h2>
-                        Резервация
-                    </h2>
-
-
-                    <button
-                            id="closeReservationModal"
-                            class="close-btn"
-                            type="button"
-                    >
-                        ×
-                    </button>
-
+                    <h2>Резервация</h2>
+                    <button id="closeReservationModal" class="close-btn" type="button">×</button>
                 </div>
 
-
-                <div
-                        id="reservationDetails"
-                        class="reservation-details"
-                >
-                </div>
-
+                <div id="reservationDetails" class="reservation-details"></div>
 
                 <div class="modal-actions">
-
-                    <button
-                            id="cancelReservationButton"
-                            class="danger-btn"
-                            type="button"
-                    >
+                    <button id="cancelReservationButton" class="danger-btn" type="button">
                         Отмени резервацията
                     </button>
-
-
-                    <button
-                            id="closeReservationModalBottom"
-                            class="secondary-btn"
-                            type="button"
-                    >
+                    <button id="closeReservationModalBottom" class="secondary-btn" type="button">
                         Затвори
                     </button>
-
                 </div>
-
             </div>
-
         </div>
 
     </main>
-
 </div>
 
-
-<!-- ================================================= -->
-<!-- ADMIN JS -->
-<!-- ================================================= -->
-
 <script src="admin.js"></script>
-
 </body>
 </html>
