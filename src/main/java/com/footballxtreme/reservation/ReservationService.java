@@ -78,18 +78,21 @@ public class ReservationService {
             );
         }
 
-        if (durationMinutes != 60 && durationMinutes != 90) {
+        if (durationMinutes != 60 &&
+                durationMinutes != 90) {
+
             throw new IllegalArgumentException(
                     "Reservation duration must be 60 or 90 minutes."
             );
         }
 
-        Pitch pitch = pitchRepository.findById(pitchId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Pitch not found."
-                        )
-                );
+        Pitch pitch =
+                pitchRepository.findById(pitchId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Pitch not found."
+                                )
+                        );
 
         if (!pitch.isActive()) {
             throw new IllegalArgumentException(
@@ -98,19 +101,27 @@ public class ReservationService {
         }
 
         LocalTime endTime =
-                startTime.plusMinutes(durationMinutes);
+                startTime.plusMinutes(
+                        durationMinutes
+                );
 
         // -----------------------------------------------------
         // WORKING HOURS
         // -----------------------------------------------------
 
-        if (startTime.isBefore(LocalTime.of(9, 0))) {
+        if (startTime.isBefore(
+                LocalTime.of(9, 0)
+        )) {
+
             throw new IllegalArgumentException(
                     "Reservations cannot start before 09:00."
             );
         }
 
-        if (endTime.isAfter(LocalTime.of(23, 0))) {
+        if (endTime.isAfter(
+                LocalTime.of(23, 0)
+        )) {
+
             throw new IllegalArgumentException(
                     "Reservation cannot end after 23:00."
             );
@@ -141,12 +152,16 @@ public class ReservationService {
         for (BlockedTime blocked : blockedTimes) {
 
             boolean overlaps =
-                    startTime.isBefore(blocked.getEndTime())
-                            && endTime.isAfter(
-                            blocked.getStartTime()
-                    );
+                    startTime.isBefore(
+                            blocked.getEndTime()
+                    )
+                            &&
+                            endTime.isAfter(
+                                    blocked.getStartTime()
+                            );
 
             if (overlaps) {
+
                 throw new IllegalArgumentException(
                         "This pitch is blocked for the selected time."
                 );
@@ -157,7 +172,8 @@ public class ReservationService {
         // RESERVATION OVERLAP CHECK
         // -----------------------------------------------------
 
-        for (Reservation existing : existingReservations) {
+        for (Reservation existing :
+                existingReservations) {
 
             LocalTime existingStart =
                     existing.getStartTime();
@@ -169,9 +185,11 @@ public class ReservationService {
 
             boolean overlaps =
                     startTime.isBefore(existingEnd)
-                            && endTime.isAfter(existingStart);
+                            &&
+                            endTime.isAfter(existingStart);
 
             if (overlaps) {
+
                 throw new IllegalArgumentException(
                         "This pitch is already reserved for the selected time."
                 );
@@ -186,9 +204,16 @@ public class ReservationService {
                 new Reservation();
 
         reservation.setPitch(pitch);
+
         reservation.setDate(date);
-        reservation.setStartTime(startTime);
-        reservation.setDurationMinutes(durationMinutes);
+
+        reservation.setStartTime(
+                startTime
+        );
+
+        reservation.setDurationMinutes(
+                durationMinutes
+        );
 
         reservation.setCustomerName(
                 customerName
@@ -202,8 +227,6 @@ public class ReservationService {
                 customerPhone
         );
 
-        // Веднага потвърждаваме резервацията.
-        // Email-ът НЕ е условие за създаване на резервацията.
         reservation.setStatus(
                 ReservationStatus.CONFIRMED
         );
@@ -230,10 +253,11 @@ public class ReservationService {
         } catch (Exception e) {
 
             /*
-             * Резервацията вече е записана и CONFIRMED.
-             * Ако email услугата не работи, НЕ проваляме
+             * Резервацията вече е записана.
+             * Email проблемът не трябва да проваля
              * самата резервация.
              */
+
             System.err.println(
                     "Reservation #" +
                             savedReservation.getId() +
@@ -247,7 +271,6 @@ public class ReservationService {
             );
         }
 
-        // Винаги връщаме успешно създадената резервация.
         return savedReservation;
     }
 
@@ -273,13 +296,55 @@ public class ReservationService {
             );
         }
 
+        // -----------------------------------------------------
+        // CANCEL
+        // -----------------------------------------------------
+
         reservation.setStatus(
                 ReservationStatus.CANCELLED
         );
 
-        return reservationRepository.save(
-                reservation
-        );
+        // -----------------------------------------------------
+        // SAVE
+        // -----------------------------------------------------
+
+        Reservation savedReservation =
+                reservationRepository.save(
+                        reservation
+                );
+
+        // -----------------------------------------------------
+        // SEND CANCELLATION EMAIL
+        // -----------------------------------------------------
+
+        try {
+
+            emailService.sendReservationCancellation(
+                    savedReservation
+            );
+
+        } catch (Exception e) {
+
+            /*
+             * Отмяната вече е записана.
+             * Email проблемът не трябва да проваля
+             * операцията по отказване.
+             */
+
+            System.err.println(
+                    "Reservation #" +
+                            savedReservation.getId() +
+                            " was cancelled successfully, " +
+                            "but cancellation email could not be sent."
+            );
+
+            System.err.println(
+                    "Email error: " +
+                            e.getMessage()
+            );
+        }
+
+        return savedReservation;
     }
 
     // =========================================================
