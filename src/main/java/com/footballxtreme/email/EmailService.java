@@ -1,10 +1,9 @@
 package com.footballxtreme.email;
 
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
 import com.footballxtreme.reservation.Reservation;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -13,14 +12,27 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
-
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HH:mm");
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
+    private final Resend resend;
+
+    public EmailService() {
+
+        String apiKey = System.getenv("RESEND_API_KEY");
+
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException(
+                    "RESEND_API_KEY environment variable is not configured."
+            );
+        }
+
+        this.resend = new Resend(apiKey);
     }
+
+    // =========================================================
+    // SEND RESERVATION CONFIRMATION
+    // =========================================================
 
     public void sendReservationConfirmation(
             Reservation reservation
@@ -63,6 +75,10 @@ public class EmailService {
         String subject =
                 "FootballXtreme – Потвърдена резервация ⚽";
 
+        // =====================================================
+        // PLAIN TEXT VERSION
+        // =====================================================
+
         String text = """
                 Здравейте, %s!
 
@@ -85,15 +101,22 @@ public class EmailService {
                 reservation.getDurationMinutes()
         );
 
+        // =====================================================
+        // HTML VERSION
+        // =====================================================
+
         String html = """
                 <!DOCTYPE html>
                 <html lang="bg">
+
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport"
                           content="width=device-width, initial-scale=1.0">
 
-                    <title>FootballXtreme - Потвърдена резервация</title>
+                    <title>
+                        FootballXtreme - Потвърдена резервация
+                    </title>
                 </head>
 
                 <body style="
@@ -116,6 +139,7 @@ public class EmailService {
                     >
 
                         <tr>
+
                             <td align="center">
 
                                 <table
@@ -137,6 +161,7 @@ public class EmailService {
                                     <!-- HEADER -->
 
                                     <tr>
+
                                         <td
                                             style="
                                                 background:#111827;
@@ -167,11 +192,13 @@ public class EmailService {
                                             </div>
 
                                         </td>
+
                                     </tr>
 
                                     <!-- CONTENT -->
 
                                     <tr>
+
                                         <td
                                             style="
                                                 padding:35px 30px;
@@ -196,13 +223,20 @@ public class EmailService {
                                                     line-height:1.6;
                                                 "
                                             >
+
                                                 Здравейте,
-                                                <strong style="color:#111827;">
+                                                <strong
+                                                    style="color:#111827;"
+                                                >
                                                     %s
                                                 </strong>!
+
                                                 <br>
+
                                                 Вашата резервация във
-                                                FootballXtreme е успешно потвърдена.
+                                                FootballXtreme е успешно
+                                                потвърдена.
+
                                             </p>
 
                                             <!-- RESERVATION BOX -->
@@ -219,7 +253,10 @@ public class EmailService {
                                                 "
                                             >
 
+                                                <!-- PITCH -->
+
                                                 <tr>
+
                                                     <td
                                                         style="
                                                             padding:18px 20px;
@@ -247,9 +284,13 @@ public class EmailService {
                                                         </div>
 
                                                     </td>
+
                                                 </tr>
 
+                                                <!-- SEPARATOR -->
+
                                                 <tr>
+
                                                     <td
                                                         style="
                                                             padding:0 20px 18px;
@@ -264,7 +305,10 @@ public class EmailService {
                                                         ></div>
 
                                                     </td>
+
                                                 </tr>
+
+                                                <!-- DATE -->
 
                                                 <tr>
 
@@ -298,7 +342,10 @@ public class EmailService {
 
                                                 </tr>
 
+                                                <!-- TIME -->
+
                                                 <tr>
+
                                                     <td
                                                         style="
                                                             padding:0 20px 18px;
@@ -326,7 +373,10 @@ public class EmailService {
                                                         </div>
 
                                                     </td>
+
                                                 </tr>
+
+                                                <!-- DURATION -->
 
                                                 <tr>
 
@@ -373,13 +423,19 @@ public class EmailService {
                                                     line-height:1.6;
                                                 "
                                             >
+
                                                 Благодарим Ви, че избрахте
-                                                <strong style="color:#111827;">
+
+                                                <strong
+                                                    style="color:#111827;"
+                                                >
                                                     FootballXtreme
                                                 </strong>!
+
                                             </p>
 
                                         </td>
+
                                     </tr>
 
                                     <!-- FOOTER -->
@@ -422,11 +478,13 @@ public class EmailService {
                                 </table>
 
                             </td>
+
                         </tr>
 
                     </table>
 
                 </body>
+
                 </html>
                 """.formatted(
                 escapeHtml(customerName),
@@ -437,52 +495,45 @@ public class EmailService {
                 reservation.getDurationMinutes()
         );
 
+        // =====================================================
+        // RESEND
+        // =====================================================
+
         try {
 
-            MimeMessage message =
-                    mailSender.createMimeMessage();
+            String fromEmail =
+                    System.getenv("RESEND_FROM_EMAIL");
 
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(
-                            message,
-                            true,
-                            "UTF-8"
-                    );
+            if (fromEmail == null ||
+                    fromEmail.isBlank()) {
 
-            // Изпращач
-            helper.setFrom(
-                    "chalakutev@gmail.com"
-            );
+                fromEmail =
+                        "FootballXtreme <onboarding@resend.dev>";
+            }
 
-            // Получател
-            helper.setTo(
-                    customerEmail
-            );
+            CreateEmailOptions params =
+                    CreateEmailOptions.builder()
+                            .from(fromEmail)
+                            .to(customerEmail)
+                            .subject(subject)
+                            .text(text)
+                            .html(html)
+                            .build();
 
-            // Subject
-            helper.setSubject(
-                    subject
-            );
+            resend.emails().send(params);
 
-            // Text + HTML
-            helper.setText(
-                    text,
-                    html
-            );
-
-            // Изпращане
-            mailSender.send(
-                    message
-            );
-
-        } catch (MessagingException e) {
+        } catch (ResendException e) {
 
             throw new RuntimeException(
-                    "Unable to create confirmation email.",
+                    "Unable to send confirmation email through Resend.",
                     e
             );
         }
     }
+
+    // =========================================================
+    // HTML ESCAPE
+    // =========================================================
 
     private String escapeHtml(
             String value
