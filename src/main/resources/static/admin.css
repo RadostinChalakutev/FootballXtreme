@@ -2,6 +2,11 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 85px;
+}
+
 body {
     margin: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -9,14 +14,24 @@ body {
     color: #17202a;
 }
 
+/* ======================================================
+   TOPBAR
+   ====================================================== */
+
 .topbar {
     height: 70px;
     background: #111827;
     color: white;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     padding: 0 35px;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .logo {
@@ -30,63 +45,239 @@ body {
     opacity: .8;
 }
 
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 30px;
+/* ======================================================
+   MAIN LAYOUT
+   ====================================================== */
+
+.admin-layout {
+    display: flex;
+    min-height: calc(100vh - 70px);
 }
+
+/* ======================================================
+   SIDEBAR
+   ====================================================== */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    bottom: 0;
+
+    width: 250px;
+
+    background: #111827;
+    border-right: 1px solid #1f2937;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 900;
+}
+
+.sidebar-logo {
+    padding: 24px 22px 20px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.sidebar-logo-main {
+    font-size: 21px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+}
+
+.sidebar-logo-sub {
+    margin-top: 5px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #9ca3af;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-nav {
+    padding: 18px 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    color: #cbd5e1;
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    transition:
+            background .18s ease,
+            color .18s ease,
+            transform .18s ease;
+}
+
+.sidebar-link:hover {
+    background: #1f2937;
+    color: #ffffff;
+
+    transform: translateX(2px);
+}
+
+.sidebar-link.active {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.sidebar-icon {
+    width: 24px;
+
+    text-align: center;
+
+    font-size: 18px;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+
+    padding: 18px;
+
+    border-top: 1px solid #1f2937;
+}
+
+.sidebar-status {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #9ca3af;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    display: inline-block;
+}
+
+/* ======================================================
+   CONTENT
+   ====================================================== */
+
+.container {
+    width: min(1400px, calc(100% - 40px));
+
+    margin-left: 250px;
+    margin-right: auto;
+
+    padding: 30px 20px 50px;
+}
+
+/* ======================================================
+   PAGE HEADER
+   ====================================================== */
 
 .page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     margin-bottom: 25px;
+
     gap: 20px;
 }
 
 .page-header h1 {
     margin: 0 0 7px;
+
     font-size: 30px;
 }
 
 .page-header p {
     margin: 0;
+
     color: #6b7280;
 }
 
+/* ======================================================
+   TODAY BOX
+   ====================================================== */
+
 .today-box {
     background: white;
+
     padding: 15px 20px;
+
     border-radius: 12px;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, .06);
+
+    box-shadow:
+            0 3px 15px rgba(0, 0, 0, .06);
+
     text-align: center;
+
     min-width: 130px;
 }
 
 .today-box span {
     display: block;
+
     font-size: 12px;
+
     color: #6b7280;
 }
 
 .today-box strong {
     display: block;
+
     margin-top: 5px;
 }
 
+/* ======================================================
+   PANELS
+   ====================================================== */
+
 .panel {
     background: white;
+
     border-radius: 15px;
+
     padding: 25px;
+
     margin-bottom: 25px;
-    box-shadow: 0 3px 18px rgba(0, 0, 0, .06);
+
+    box-shadow:
+            0 3px 18px rgba(0, 0, 0, .06);
 }
 
 .panel-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     margin-bottom: 20px;
+
     gap: 15px;
 }
 
@@ -96,20 +287,35 @@ body {
 
 .panel-header p {
     margin: 0;
+
     color: #6b7280;
+
     line-height: 1.5;
 }
 
+/* ======================================================
+   DASHBOARD
+   ====================================================== */
+
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
+
     gap: 15px;
 }
 
 .pitch-day-card {
     border: 1px solid #e5e7eb;
+
     border-radius: 12px;
+
     padding: 18px;
+
     overflow: hidden;
 }
 
@@ -119,7 +325,9 @@ body {
 
 .work-hours-info {
     margin: -5px 0 15px;
+
     color: #6b7280;
+
     font-size: 13px;
 }
 
@@ -130,11 +338,16 @@ body {
 
 .time-row {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 12px;
+
     padding: 11px 0;
-    border-bottom: 1px solid #f0f0f0;
+
+    border-bottom:
+            1px solid #f0f0f0;
 }
 
 .time-row:last-child {
@@ -147,9 +360,13 @@ body {
 
 .status {
     font-size: 12px;
+
     font-weight: bold;
+
     padding: 5px 9px;
+
     border-radius: 20px;
+
     text-align: center;
 }
 
@@ -173,13 +390,21 @@ body {
     color: #374151;
 }
 
+/* ======================================================
+   TOOLBARS
+   ====================================================== */
+
 .calendar-toolbar,
 .time-management-toolbar,
 .add-pitch-form {
     display: flex;
+
     align-items: end;
+
     gap: 15px;
+
     flex-wrap: wrap;
+
     margin-bottom: 20px;
 }
 
@@ -189,23 +414,42 @@ body {
 
 .calendar-controls {
     display: flex;
+
     align-items: center;
+
     gap: 15px;
 }
 
 .icon-btn {
     width: 36px;
     height: 36px;
+
     border: none;
+
     border-radius: 8px;
+
     background: #eef2f7;
+
     cursor: pointer;
+
     font-size: 22px;
+
+    transition: .15s;
 }
+
+.icon-btn:hover {
+    filter: brightness(.96);
+}
+
+/* ======================================================
+   FORMS
+   ====================================================== */
 
 .form-group {
     display: flex;
+
     flex-direction: column;
+
     gap: 7px;
 }
 
@@ -215,25 +459,41 @@ body {
 
 label {
     font-size: 13px;
+
     font-weight: bold;
 }
 
 input,
 select {
     height: 43px;
+
     padding: 0 12px;
+
     border: 1px solid #d1d5db;
+
     border-radius: 8px;
+
     background: white;
+
     font-size: 14px;
+
+    font-family: inherit;
 }
 
 input:focus,
 select:focus {
     outline: none;
+
     border-color: #111827;
-    box-shadow: 0 0 0 3px rgba(17, 24, 39, .08);
+
+    box-shadow:
+            0 0 0 3px
+            rgba(17, 24, 39, .08);
 }
+
+/* ======================================================
+   BUTTONS
+   ====================================================== */
 
 button {
     font-family: inherit;
@@ -244,10 +504,18 @@ button {
 .warning-btn,
 .danger-btn {
     border: none;
+
     border-radius: 8px;
+
     padding: 11px 16px;
+
     cursor: pointer;
+
     font-weight: bold;
+
+    transition:
+            transform .15s ease,
+            filter .15s ease;
 }
 
 .primary-btn {
@@ -278,32 +546,59 @@ button {
     filter: brightness(.96);
 }
 
+.primary-btn:active,
+.secondary-btn:active,
+.warning-btn:active,
+.danger-btn:active {
+    transform: translateY(1px);
+}
+
 .toolbar-action-btn {
     height: 43px;
 }
 
+/* ======================================================
+   CALENDAR
+   ====================================================== */
+
 .calendar {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
     border: 1px solid #e5e7eb;
+
     border-radius: 12px;
+
     overflow: hidden;
 }
 
 .calendar-day-name {
     padding: 12px;
+
     background: #f8fafc;
+
     text-align: center;
+
     font-weight: bold;
+
     font-size: 13px;
 }
 
 .calendar-day {
     min-height: 100px;
-    border-top: 1px solid #e5e7eb;
-    border-right: 1px solid #e5e7eb;
+
+    border-top:
+            1px solid #e5e7eb;
+
+    border-right:
+            1px solid #e5e7eb;
+
     padding: 10px;
+
     cursor: pointer;
+
     transition: .15s;
 }
 
@@ -313,11 +608,14 @@ button {
 
 .calendar-day.empty {
     background: #fafafa;
+
     cursor: default;
 }
 
 .calendar-day.today {
-    outline: 2px solid #111827;
+    outline:
+            2px solid #111827;
+
     outline-offset: -2px;
 }
 
@@ -327,25 +625,33 @@ button {
 
 .day-number {
     font-weight: bold;
+
     margin-bottom: 8px;
 }
 
 .day-count {
     font-size: 12px;
+
     color: #6b7280;
 }
 
 .selected-date-title {
     margin-top: 20px;
+
     font-size: 16px;
+
     font-weight: 800;
 }
 
 .calendar-details-header {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 15px;
+
     margin-bottom: 20px;
 }
 
@@ -357,49 +663,85 @@ button {
     margin-top: 15px;
 }
 
+/* ======================================================
+   RESERVATIONS
+   ====================================================== */
+
 .reservation-card {
-    border: 1px solid #e5e7eb;
+    border:
+            1px solid #e5e7eb;
+
     border-radius: 12px;
+
     padding: 18px;
+
     margin-bottom: 10px;
+
     cursor: pointer;
+
+    transition:
+            background .15s ease,
+            transform .15s ease;
 }
 
 .reservation-card:hover {
     background: #f8fafc;
+
+    transform: translateY(-1px);
 }
 
 .blocked-card {
     cursor: default;
+
     background: #fffaf0;
+}
+
+.blocked-card:hover {
+    background: #fffaf0;
+
+    transform: none;
 }
 
 .reservation-main {
     display: flex;
+
     justify-content: space-between;
+
     gap: 15px;
 }
 
 .reservation-time {
     font-size: 18px;
+
     font-weight: bold;
 }
 
 .reservation-name {
     font-weight: bold;
+
     margin-top: 4px;
 }
 
 .reservation-meta {
     margin-top: 5px;
+
     color: #6b7280;
+
     font-size: 13px;
 }
 
+/* ======================================================
+   AVAILABLE PITCHES
+   ====================================================== */
+
 .search-form {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr auto;
+
+    grid-template-columns:
+        1fr 1fr 1fr auto;
+
     gap: 15px;
+
     align-items: end;
 }
 
@@ -408,41 +750,65 @@ button {
 }
 
 .available-pitch {
-    border: 1px solid #e5e7eb;
+    border:
+            1px solid #e5e7eb;
+
     border-radius: 10px;
+
     padding: 14px 16px;
+
     margin-bottom: 10px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 15px;
 }
 
 .available-pitch.free {
-    border-left: 5px solid #22c55e;
+    border-left:
+            5px solid #22c55e;
 }
 
 .available-pitch.busy {
-    border-left: 5px solid #ef4444;
+    border-left:
+            5px solid #ef4444;
 }
 
 .available-pitch.blocked {
-    border-left: 5px solid #f59e0b;
+    border-left:
+            5px solid #f59e0b;
 }
+
+/* ======================================================
+   PITCH MANAGEMENT
+   ====================================================== */
 
 .pitch-list {
     display: flex;
+
     flex-direction: column;
+
     gap: 10px;
 }
 
 .pitch-card {
-    border: 1px solid #e5e7eb;
+    border:
+            1px solid #e5e7eb;
+
     border-radius: 12px;
+
     padding: 16px 18px;
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 15px;
 }
 
@@ -452,15 +818,23 @@ button {
 
 .pitch-status {
     margin-top: 5px;
+
     font-size: 13px;
+
     color: #6b7280;
 }
 
 .pitch-actions {
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 8px;
 }
+
+/* ======================================================
+   BLOCKED TIME GRID
+   ====================================================== */
 
 .blocked-time-grid {
     margin-top: 10px;
@@ -468,12 +842,18 @@ button {
 
 .blocked-time-header {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
+
     gap: 15px;
+
     margin-bottom: 15px;
+
     padding-bottom: 12px;
-    border-bottom: 1px solid #e5e7eb;
+
+    border-bottom:
+            1px solid #e5e7eb;
 }
 
 .blocked-time-header strong {
@@ -482,102 +862,155 @@ button {
 
 .blocked-time-header span {
     color: #6b7280;
+
     font-size: 13px;
 }
 
 .blocked-time-slots {
     display: flex;
+
     flex-direction: column;
+
     gap: 10px;
+
     max-width: 800px;
 }
 
 .blocked-time-slot {
     width: 100%;
+
     min-height: 64px;
+
     border: none;
+
     border-radius: 10px;
+
     cursor: pointer;
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     padding: 0 20px;
+
     font-family: inherit;
-    transition: .15s;
+
+    transition:
+            transform .15s ease,
+            filter .15s ease;
+
     text-align: left;
 }
 
 .blocked-time-slot.free {
     background: #dcfce7;
+
     color: #166534;
 }
 
 .blocked-time-slot.blocked {
     background: #fef3c7;
+
     color: #92400e;
 }
 
 .blocked-time-slot.reserved {
     background: #fee2e2;
+
     color: #991b1b;
+
     cursor: not-allowed;
 }
 
 .blocked-time-slot:hover:not(:disabled) {
     transform: translateX(3px);
+
+    filter: brightness(.98);
 }
 
 .blocked-slot-left {
     display: flex;
+
     flex-direction: column;
+
     gap: 5px;
 }
 
 .blocked-slot-time {
     font-weight: 800;
+
     font-size: 16px;
 }
 
 .blocked-slot-reason {
     font-size: 12px;
+
     opacity: .8;
 }
 
 .blocked-slot-status {
     font-size: 13px;
+
     font-weight: 800;
+
     text-align: right;
 }
 
 .blocked-closed {
     padding: 20px;
+
     text-align: center;
+
     background: #f8fafc;
+
     border-radius: 10px;
+
     color: #6b7280;
 }
 
 .blocked-time-help {
     margin-top: 15px;
+
     color: #6b7280;
+
     font-size: 13px;
 }
 
+/* ======================================================
+   LOADING
+   ====================================================== */
+
 .loading {
     padding: 20px;
+
     text-align: center;
+
     color: #6b7280;
 }
 
+/* ======================================================
+   MODALS
+   ====================================================== */
+
 .modal {
     position: fixed;
+
     inset: 0;
-    background: rgba(0, 0, 0, .55);
+
+    background:
+            rgba(0, 0, 0, .55);
+
     display: none;
+
     align-items: center;
+
     justify-content: center;
+
     padding: 20px;
-    z-index: 1000;
+
+    z-index: 2000;
 }
 
 .modal.show {
@@ -586,12 +1019,20 @@ button {
 
 .modal-content {
     background: white;
+
     width: min(700px, 100%);
+
     max-height: 90vh;
+
     overflow-y: auto;
+
     border-radius: 15px;
+
     padding: 25px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, .2);
+
+    box-shadow:
+            0 15px 50px
+            rgba(0, 0, 0, .2);
 }
 
 .modal-content.small {
@@ -600,9 +1041,13 @@ button {
 
 .modal-header {
     display: flex;
+
     justify-content: space-between;
+
     align-items: flex-start;
+
     gap: 15px;
+
     margin-bottom: 20px;
 }
 
@@ -612,62 +1057,150 @@ button {
 
 .modal-context {
     margin-top: 5px;
+
     color: #6b7280;
+
     font-size: 13px;
 }
 
 .close-btn {
     border: none;
+
     background: transparent;
+
     font-size: 28px;
+
     cursor: pointer;
+
     line-height: 1;
 }
 
 .modal-actions {
     display: flex;
+
     justify-content: flex-end;
+
     flex-wrap: wrap;
+
     gap: 10px;
+
     margin-top: 20px;
 }
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+
+    grid-template-columns:
+        1fr 1fr;
+
     gap: 15px;
 }
 
 .reservation-details {
     display: flex;
+
     flex-direction: column;
 }
 
 .detail-row {
     display: flex;
+
     justify-content: space-between;
+
     gap: 15px;
+
     padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
+
+    border-bottom:
+            1px solid #f0f0f0;
 }
 
 .detail-label {
     color: #6b7280;
+
     font-size: 13px;
 }
 
 .detail-value {
     font-weight: 700;
+
     text-align: right;
 }
 
+/* ======================================================
+   SIDEBAR SECTION ANCHORS
+   ====================================================== */
+
+#dashboardSection,
+#calendarSection,
+#timeManagementSection,
+#pitchesSection {
+    scroll-margin-top: 90px;
+}
+
+/* ======================================================
+   RESPONSIVE — TABLET
+   ====================================================== */
+
 @media (max-width: 900px) {
+
+    .sidebar {
+        position: sticky;
+
+        top: 70px;
+        left: auto;
+        bottom: auto;
+
+        width: 100%;
+
+        height: auto;
+
+        border-right: none;
+
+        border-bottom:
+                1px solid #1f2937;
+    }
+
+    .sidebar-logo,
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .sidebar-nav {
+        padding: 10px 12px;
+
+        flex-direction: row;
+
+        overflow-x: auto;
+
+        gap: 8px;
+    }
+
+    .sidebar-link {
+        flex: 0 0 auto;
+
+        white-space: nowrap;
+
+        min-height: 42px;
+
+        padding: 0 14px;
+    }
+
+    .sidebar-icon {
+        width: auto;
+    }
+
     .container {
+        width: 100%;
+
+        margin-left: 0;
+
         padding: 20px;
     }
 
     .page-header {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -680,17 +1213,60 @@ button {
     }
 }
 
+/* ======================================================
+   RESPONSIVE — MOBILE
+   ====================================================== */
+
 @media (max-width: 650px) {
+
     .topbar {
+        height: 56px;
+
         padding: 0 18px;
     }
 
+    .logo {
+        font-size: 20px;
+    }
+
+    .admin-info {
+        font-size: 11px;
+    }
+
+    .sidebar {
+        top: 56px;
+    }
+
+    .sidebar-nav {
+        padding: 8px 10px;
+    }
+
+    .sidebar-link {
+        font-size: 13px;
+
+        min-height: 40px;
+
+        padding: 0 13px;
+    }
+
+    .sidebar-icon {
+        font-size: 16px;
+    }
+
     .container {
-        padding: 15px;
+        width: 100%;
+
+        padding: 15px 10px 30px;
     }
 
     .panel {
         padding: 18px;
+
+        border-radius: 12px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
     }
 
     .calendar {
@@ -699,6 +1275,7 @@ button {
 
     .calendar-day {
         padding: 7px;
+
         min-height: 65px;
     }
 
@@ -706,6 +1283,7 @@ button {
     .reservation-main,
     .pitch-card {
         flex-direction: column;
+
         align-items: stretch;
     }
 
@@ -719,5 +1297,23 @@ button {
 
     .detail-value {
         text-align: left;
+    }
+
+    .blocked-time-slot {
+        min-height: 58px;
+
+        padding: 0 13px;
+    }
+
+    .blocked-slot-time {
+        font-size: 14px;
+    }
+
+    .blocked-slot-status {
+        font-size: 11px;
+    }
+
+    .today-box {
+        width: 100%;
     }
 }
