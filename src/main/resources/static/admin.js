@@ -31,6 +31,7 @@ document
         }
     );
 
+
 async function init() {
     setToday();
     bindEvents();
@@ -251,7 +252,9 @@ async function loadPitches() {
 function renderPitches() {
     const container = document.getElementById("pitchList");
 
-    if (!container) return;
+    if (!container) {
+        return;
+    }
 
     if (!pitches.length) {
         container.innerHTML = `
@@ -263,21 +266,28 @@ function renderPitches() {
     }
 
     container.innerHTML = pitches.map(pitch => {
+
         const active = pitch.active === true;
 
         return `
             <div class="pitch-card">
+
                 <div>
                     <div class="pitch-name">
                         ⚽ ${escapeHtml(pitch.name)}
                     </div>
 
                     <div class="pitch-status">
-                        ${active ? "🟢 Активно" : "🔴 Неактивно"}
+                        ${
+            active
+                ? "🟢 Активно"
+                : "🔴 Неактивно"
+        }
                     </div>
                 </div>
 
                 <div class="pitch-actions">
+
                     <button
                         class="secondary-btn"
                         type="button"
@@ -296,28 +306,47 @@ function renderPitches() {
                                 </button>
                               `
                 : `
-                                <span class="status closed">
-                                    Неактивно
-                                </span>
+                                <button
+                                    class="primary-btn"
+                                    type="button"
+                                    data-activate-pitch="${pitch.id}">
+                                    🟢 Активирай
+                                </button>
                               `
         }
+
                 </div>
+
             </div>
         `;
     }).join("");
 
-    container.querySelectorAll("[data-edit-pitch]")
+    container
+        .querySelectorAll("[data-edit-pitch]")
         .forEach(button => {
             button.addEventListener("click", () => {
-                editPitch(Number(button.dataset.editPitch));
+                editPitch(
+                    Number(button.dataset.editPitch)
+                );
             });
         });
 
-    container.querySelectorAll("[data-deactivate-pitch]")
+    container
+        .querySelectorAll("[data-deactivate-pitch]")
         .forEach(button => {
             button.addEventListener("click", () => {
                 deactivatePitch(
                     Number(button.dataset.deactivatePitch)
+                );
+            });
+        });
+
+    container
+        .querySelectorAll("[data-activate-pitch]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                activatePitch(
+                    Number(button.dataset.activatePitch)
                 );
             });
         });
@@ -441,9 +470,18 @@ async function editPitch(id) {
     }
 }
 
-async function deactivatePitch(pitchId) {
+async function deactivatePitch(id) {
+
+    const pitch = pitches.find(
+        item => Number(item.id) === Number(id)
+    );
+
+    if (!pitch) {
+        return;
+    }
+
     const confirmed = confirm(
-        "Сигурни ли сте, че искате да деактивирате това игрище?"
+        `Сигурни ли сте, че искате да деактивирате "${pitch.name}"?`
     );
 
     if (!confirmed) {
@@ -451,33 +489,69 @@ async function deactivatePitch(pitchId) {
     }
 
     try {
-        const response = await fetch(
-            `${API}/api/pitches/${pitchId}/deactivate`,
+
+        await apiFetch(
+            `/pitches/${id}/deactivate`,
             {
                 method: "PUT"
             }
         );
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(
-                errorText || "Грешка при деактивиране."
-            );
-        }
-
         await loadPitches();
-        await loadDashboard();
+
+        renderCalendar();
         await loadCalendar();
-
-        alert("Игрището е деактивирано успешно.");
-
-    } catch (error) {
-        console.error("Deactivate pitch error:", error);
+        await loadDashboard();
 
         alert(
-            "Грешка при деактивиране: " +
-            error.message
+            `Игрището "${pitch.name}" е деактивирано.`
         );
+
+    } catch (error) {
+
+        showError(error);
+    }
+}
+async function activatePitch(id) {
+
+    const pitch = pitches.find(
+        item => Number(item.id) === Number(id)
+    );
+
+    if (!pitch) {
+        return;
+    }
+
+    const confirmed = confirm(
+        `Сигурни ли сте, че искате да активирате "${pitch.name}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        await apiFetch(
+            `/pitches/${id}/activate`,
+            {
+                method: "PUT"
+            }
+        );
+
+        await loadPitches();
+
+        renderCalendar();
+        await loadCalendar();
+        await loadDashboard();
+
+        alert(
+            `Игрището "${pitch.name}" е активирано.`
+        );
+
+    } catch (error) {
+
+        showError(error);
     }
 }
 async function searchReservationsByPhone() {
