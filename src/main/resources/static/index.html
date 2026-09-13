@@ -1,264 +1,545 @@
 <!DOCTYPE html>
 <html lang="bg">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        FootballXtreme - Резервация
-    </title>
-
-    <link
-            rel="stylesheet"
-            href="style.css"
+    <meta
+            name="description"
+            content="FootballXtreme – бърза и лесна резервация на футболно игрище."
     >
 
-</head>
+    <title>FootballXtreme | Резервирай игрище</title>
 
+    <link rel="stylesheet" href="style.css">
+</head>
 
 <body>
 
+<header class="site-header">
+    <div class="header-inner">
 
-<header class="topbar">
+        <a href="/" class="brand">
+            <span class="brand-ball">⚽</span>
 
-    <div
-            class="logo"
-            data-client-name
-    >
-        FootballXtreme
+            <span class="brand-text">
+                <strong>FootballXtreme</strong>
+                <small>FOOTBALL PITCH RESERVATION</small>
+            </span>
+        </a>
+
+        <div class="header-status">
+            <span class="status-dot"></span>
+            Онлайн резервации
+        </div>
+
     </div>
-
-    <div class="topbar-right">
-        РЕЗЕРВАЦИИ
-    </div>
-
 </header>
 
 
-<main class="container">
+<main>
 
-
-    <!-- HERO -->
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
 
     <section class="hero">
 
-        <h1>
-            Резервирай футболно игрище
-        </h1>
+        <div class="hero-background"></div>
 
-        <p>
-            Избери игрище, дата и удобен час.
-        </p>
+        <div class="hero-content">
 
-    </section>
+            <div class="hero-badge">
+                ⚽ Бърза онлайн резервация
+            </div>
 
+            <h1>
+                Резервирай своето
+                <span>футболно игрище</span>
+            </h1>
 
-
-    <!-- BOOKING -->
-
-    <section class="booking-card">
-
-
-        <!-- PITCH -->
-
-        <div class="form-group">
-
-            <label for="pitch">
-                ⚽ Игрище
-            </label>
-
-            <select id="pitch">
-
-                <option value="">
-                    Зареждане...
-                </option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- DATE -->
-
-        <div class="form-group">
-
-            <label for="date">
-                📅 Дата
-            </label>
-
-            <input
-                    type="date"
-                    id="date"
-            >
-
-        </div>
-
-
-
-        <!-- DURATION -->
-
-        <div class="form-group">
-
-            <label for="duration">
-                ⏱️ Продължителност
-            </label>
-
-            <select id="duration">
-
-                <option value="60">
-                    60 минути
-                </option>
-
-                <option value="90">
-                    90 минути
-                </option>
-
-            </select>
-
-        </div>
-
-
-
-        <!-- AVAILABLE HOURS -->
-
-        <div class="hours-section">
-
-            <h2>
-                Свободни часове
-            </h2>
-
-            <p class="hint">
-                Избери дата и игрище,
-                за да видиш свободните часове.
+            <p>
+                Избери игрище, дата и удобен час.
+                Резервацията отнема само няколко секунди.
             </p>
 
-            <div
-                    id="hours"
-                    class="hours-grid"
-            >
+            <div class="hero-features">
+
+                <div class="hero-feature">
+                    <span>✓</span>
+                    <span>Виж свободните часове в реално време</span>
+                </div>
+
+                <div class="hero-feature">
+                    <span>✓</span>
+                    <span>Потвърждение веднага</span>
+                </div>
+
+                <div class="hero-feature">
+                    <span>✓</span>
+                    <span>Без излишни стъпки</span>
+                </div>
+
             </div>
 
         </div>
-
-
-
-        <!-- CUSTOMER -->
-
-        <div
-                id="customerForm"
-                class="customer-form hidden"
-        >
-
-            <h2>
-                Данни за резервацията
-            </h2>
-
-
-            <div class="form-group">
-
-                <label for="customerName">
-                    Име
-                </label>
-
-                <input
-                        type="text"
-                        id="customerName"
-                        placeholder="Вашето име"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="customerPhone">
-                    Телефон
-                </label>
-
-                <input
-                        type="tel"
-                        id="customerPhone"
-                        placeholder="Вашият телефон"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="customerEmail">
-                    Email
-                </label>
-
-                <input
-                        type="email"
-                        id="customerEmail"
-                        placeholder="Вашият email"
-                >
-
-            </div>
-
-
-            <div
-                    id="selectedTime"
-                    class="selected-time"
-            >
-            </div>
-
-
-            <button
-                    id="reserveButton"
-                    onclick="createReservation()"
-            >
-                ⚽ РЕЗЕРВИРАЙ
-            </button>
-
-        </div>
-
-
-        <!-- CONTACT INFORMATION -->
-
-        <div class="client-contact">
-
-            <div
-                    data-client-phone
-            ></div>
-
-            <div
-                    data-client-email
-            ></div>
-
-            <div
-                    data-client-address
-            ></div>
-
-        </div>
-
-
-        <!-- MESSAGE -->
-
-        <div
-                id="message"
-                class="message"
-        >
-        </div>
-
 
     </section>
 
 
+    <!-- =====================================================
+         BOOKING
+         ===================================================== -->
+
+    <section class="booking-section">
+
+        <div class="booking-container">
+
+            <div class="booking-header">
+
+                <div>
+                    <span class="section-eyebrow">
+                        РЕЗЕРВАЦИЯ
+                    </span>
+
+                    <h2>
+                        Избери своя час
+                    </h2>
+
+                    <p>
+                        Попълни основните данни и ще видиш
+                        наличните часове за избраното игрище.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="booking-grid">
+
+                <!-- =================================================
+                     LEFT — SELECTION
+                     ================================================= -->
+
+                <div class="booking-card selection-card">
+
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+
+                        <div>
+                            <h3>Избери параметри</h3>
+                            <p>Игрище, дата и продължителност</p>
+                        </div>
+                    </div>
+
+
+                    <div class="form-grid">
+
+                        <!-- PITCH -->
+
+                        <div class="form-group full-width">
+
+                            <label for="pitch">
+                                Игрище
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <select id="pitch">
+
+                                    <option value="">
+                                        Избери игрище
+                                    </option>
+
+                                </select>
+
+                                <span class="select-icon">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="form-group">
+
+                            <label for="date">
+                                Дата
+                            </label>
+
+                            <div class="input-wrapper">
+
+                                <span class="input-icon">
+                                    📅
+                                </span>
+
+                                <input
+                                        type="date"
+                                        id="date"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DURATION -->
+
+                        <div class="form-group">
+
+                            <label for="duration">
+                                Продължителност
+                            </label>
+
+                            <div class="select-wrapper">
+
+                                <select id="duration">
+
+                                    <option value="60">
+                                        60 минути
+                                    </option>
+
+                                    <option value="90">
+                                        90 минути
+                                    </option>
+
+                                </select>
+
+                                <span class="select-icon">
+                                    ↓
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- HOURS -->
+
+                    <div class="hours-section">
+
+                        <div class="hours-header">
+
+                            <div>
+                                <h3>
+                                    Налични часове
+                                </h3>
+
+                                <p>
+                                    Избери удобен начален час
+                                </p>
+                            </div>
+
+                            <div class="availability-legend">
+
+                                <span>
+                                    <i class="legend-dot available"></i>
+                                    Свободен
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot busy"></i>
+                                    Зает
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                                id="hours"
+                                class="hours-grid"
+                        >
+
+                            <div class="hours-placeholder">
+                                <div class="placeholder-icon">
+                                    🕐
+                                </div>
+
+                                <strong>
+                                    Избери игрище и дата
+                                </strong>
+
+                                <span>
+                                    Свободните часове ще се покажат тук.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     RIGHT — SUMMARY / FORM
+                     ================================================= -->
+
+                <div class="booking-side">
+
+                    <!-- SUMMARY -->
+
+                    <div class="booking-card summary-card">
+
+                        <div class="step-header">
+
+                            <div class="step-number">
+                                2
+                            </div>
+
+                            <div>
+                                <h3>
+                                    Твоята резервация
+                                </h3>
+
+                                <p>
+                                    Провери избрания час
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="summary-empty">
+
+                            <div class="summary-empty-icon">
+                                ⚽
+                            </div>
+
+                            <strong>
+                                Все още няма избран час
+                            </strong>
+
+                            <span>
+                                Избери свободен час от графика.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CUSTOMER FORM -->
+
+                    <div
+                            id="customerForm"
+                            class="booking-card customer-card hidden"
+                    >
+
+                        <div class="step-header">
+
+                            <div class="step-number">
+                                3
+                            </div>
+
+                            <div>
+                                <h3>
+                                    Твоите данни
+                                </h3>
+
+                                <p>
+                                    За потвърждение на резервацията
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                                id="selectedTime"
+                                class="selected-time"
+                        >
+                        </div>
+
+
+                        <div class="customer-form-fields">
+
+                            <div class="form-group">
+
+                                <label for="customerName">
+                                    Име
+                                </label>
+
+                                <input
+                                        type="text"
+                                        id="customerName"
+                                        placeholder="Вашето име"
+                                        autocomplete="name"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="customerPhone">
+                                    Телефон
+                                </label>
+
+                                <input
+                                        type="tel"
+                                        id="customerPhone"
+                                        placeholder="0888 123 456"
+                                        autocomplete="tel"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="customerEmail">
+                                    Email
+                                </label>
+
+                                <input
+                                        type="email"
+                                        id="customerEmail"
+                                        placeholder="you@example.com"
+                                        autocomplete="email"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                                id="reserveButton"
+                                type="button"
+                                class="reserve-button"
+                        >
+                            <span>⚽</span>
+                            РЕЗЕРВИРАЙ СЕГА
+                        </button>
+
+                        <div class="trust-note">
+                            🔒 Данните ти се използват само за
+                            обработка на резервацията.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+
+            <div
+                    id="message"
+                    class="message"
+            ></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         INFO
+         ===================================================== -->
+
+    <section class="info-section">
+
+        <div class="info-container">
+
+            <div class="info-item">
+
+                <div class="info-icon">
+                    ⚡
+                </div>
+
+                <div>
+                    <strong>
+                        Бързо резервиране
+                    </strong>
+
+                    <span>
+                        Избираш час и потвърждаваш.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <div class="info-icon">
+                    🕐
+                </div>
+
+                <div>
+                    <strong>
+                        Реална наличност
+                    </strong>
+
+                    <span>
+                        Виждаш актуалния график.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <div class="info-icon">
+                    📧
+                </div>
+
+                <div>
+                    <strong>
+                        Email потвърждение
+                    </strong>
+
+                    <span>
+                        Получаваш данните за резервацията.
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div>
+            <strong>FootballXtreme</strong>
+
+            <span>
+                Football Pitch Reservation
+            </span>
+        </div>
+
+        <span class="footer-copy">
+            © 2026 FootballXtreme
+        </span>
+
+    </div>
+
+</footer>
 
 
 <script src="app.js"></script>
 
 </body>
-
 </html>
