@@ -455,12 +455,8 @@ function generateHours() {
             reservation => {
 
                 if (
-                    Number(
-                        reservation.pitch?.id
-                    ) !==
-                    Number(
-                        selectedPitchId
-                    )
+                    Number(reservation.pitch?.id) !==
+                    Number(selectedPitchId)
                 ) {
                     return false;
                 }

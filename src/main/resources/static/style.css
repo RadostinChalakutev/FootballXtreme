@@ -1160,3 +1160,16 @@ body {
         height: 38px;
     }
 }
+.hour-button.busy {
+    background: #fff1f1 !important;
+    border-color: #ff4d4d !important;
+    color: #d92d20 !important;
+    cursor: not-allowed !important;
+}
+
+.hour-button.busy:disabled {
+    opacity: 1 !important;
+    background: #fff1f1 !important;
+    border-color: #ff4d4d !important;
+    color: #d92d20 !important;
+}
