@@ -1472,16 +1472,14 @@ function showCustomerForm() {
     } catch (error) {
 
     console.error(
-    "Reservation error:",
-    error
+        "Reservation error:",
+        error
     );
-
 
     showMessage(
-    `Резервацията не беше направена: ${error.message}`,
-    "error"
+        `Резервацията не беше направена: ${error.message}`,
+        "error"
     );
-
 
     } finally {
 
@@ -1650,6 +1648,10 @@ function showCustomerForm() {
 AUTO REFRESH AVAILABILITY
 ========================================================= */
 
+/* =========================================================
+   AUTO REFRESH AVAILABILITY
+   ========================================================= */
+
 setInterval(async () => {
 
     if (!selectedPitchId || !selectedDate) {
@@ -1664,24 +1666,10 @@ setInterval(async () => {
     } catch (error) {
 
         console.error(
-            "Reservation error:",
+            "Auto refresh error:",
             error
         );
 
-        try {
-            await loadAvailability();
-        } catch (refreshError) {
-            console.error(
-                "Availability refresh error:",
-                refreshError
-            );
-        }
-
-        showMessage(
-            "Този час вече е зает. Графикът е обновен.",
-            "error"
-        );
-
-
     }
-})
+
+}, 5000);
