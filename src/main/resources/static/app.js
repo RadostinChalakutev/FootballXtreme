@@ -43,7 +43,7 @@ document.addEventListener(
 
 function setupEventListeners() {
 
-    const pitch =it
+    const pitch =
         document.getElementById("pitch");
 
     const date =
