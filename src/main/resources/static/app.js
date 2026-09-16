@@ -43,7 +43,7 @@ document.addEventListener(
 
 function setupEventListeners() {
 
-    const pitch =
+    const pitch =it
         document.getElementById("pitch");
 
     const date =
@@ -1646,3 +1646,42 @@ function showCustomerForm() {
     }
     );
     }
+/* =========================================================
+AUTO REFRESH AVAILABILITY
+========================================================= */
+
+setInterval(async () => {
+
+    if (!selectedPitchId || !selectedDate) {
+        return;
+    }
+
+    try {
+        await loadReservations();
+        await loadBlockedTimes();
+        renderHours();
+
+    } catch (error) {
+
+        console.error(
+            "Reservation error:",
+            error
+        );
+
+        try {
+            await loadAvailability();
+        } catch (refreshError) {
+            console.error(
+                "Availability refresh error:",
+                refreshError
+            );
+        }
+
+        showMessage(
+            "Този час вече е зает. Графикът е обновен.",
+            "error"
+        );
+
+
+    }
+})
