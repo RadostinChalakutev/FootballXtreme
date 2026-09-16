@@ -262,7 +262,9 @@ async function loadReservations() {
 
         const response =
             await fetch(
-                `${API}/api/reservations`
+                `${API}/api/reservations`,{
+                    cache: "no-store"
+                }
             );
 
         if (!response.ok) {
@@ -1659,9 +1661,7 @@ setInterval(async () => {
     }
 
     try {
-        await loadReservations();
-        await loadBlockedTimes();
-        renderHours();
+        await loadAvailability();
 
     } catch (error) {
 
