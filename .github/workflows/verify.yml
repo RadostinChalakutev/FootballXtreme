@@ -1,0 +1,38 @@
+name: Verify booking safety
+on:
+  push:
+    branches: [master, codex/release-readiness]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: footballxtreme_test
+          POSTGRES_USER: booking_test
+          POSTGRES_PASSWORD: test-only-local-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U booking_test -d footballxtreme_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      TEST_DB_URL: jdbc:postgresql://localhost:5432/footballxtreme_test
+      TEST_DB_USER: booking_test
+      TEST_DB_PASSWORD: test-only-local-password
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: mvn -B verify
+      - run: node --test src/test/js/availability.test.cjs
+      - run: node --check src/main/resources/static/admin.js && node --check src/main/resources/static/csrf.js

@@ -66,6 +66,7 @@ public class PitchService {
     // UPDATE NAME
     // ==========================================
 
+    @org.springframework.transaction.annotation.Transactional
     public Pitch updatePitch(
             Long id,
             String name
@@ -74,7 +75,7 @@ public class PitchService {
         validateName(name);
 
         Pitch pitch =
-                getPitchById(id);
+                pitchRepository.findByIdForUpdate(id).orElseThrow(() -> new IllegalArgumentException("Pitch not found."));
 
         pitch.setName(
                 name.trim()
@@ -90,12 +91,13 @@ public class PitchService {
     // DEACTIVATE
     // ==========================================
 
+    @org.springframework.transaction.annotation.Transactional
     public Pitch deactivatePitch(
             Long id
     ) {
 
         Pitch pitch =
-                getPitchById(id);
+                pitchRepository.findByIdForUpdate(id).orElseThrow(() -> new IllegalArgumentException("Pitch not found."));
 
         pitch.setActive(false);
 
@@ -109,12 +111,13 @@ public class PitchService {
     // ACTIVATE
     // ==========================================
 
+    @org.springframework.transaction.annotation.Transactional
     public Pitch activatePitch(
             Long id
     ) {
 
         Pitch pitch =
-                getPitchById(id);
+                pitchRepository.findByIdForUpdate(id).orElseThrow(() -> new IllegalArgumentException("Pitch not found."));
 
         pitch.setActive(true);
 

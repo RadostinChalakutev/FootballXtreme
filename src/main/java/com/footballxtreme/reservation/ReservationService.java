@@ -17,18 +17,24 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final PitchRepository pitchRepository;
     private final BlockedTimeRepository blockedTimeRepository;
-    private final EmailService emailService;
+    private final org.springframework.context.ApplicationEventPublisher events;
+    private final com.footballxtreme.settings.WorkingHoursService workingHours;
+    private final java.time.Clock clock;
 
     public ReservationService(
             ReservationRepository reservationRepository,
             PitchRepository pitchRepository,
             BlockedTimeRepository blockedTimeRepository,
-            EmailService emailService
+            org.springframework.context.ApplicationEventPublisher events,
+            com.footballxtreme.settings.WorkingHoursService workingHours,
+            java.time.Clock clock
     ) {
         this.reservationRepository = reservationRepository;
         this.pitchRepository = pitchRepository;
         this.blockedTimeRepository = blockedTimeRepository;
-        this.emailService = emailService;
+        this.events = events;
+        this.workingHours = workingHours;
+        this.clock = clock;
     }
 
     // =========================================================
@@ -72,6 +78,7 @@ public class ReservationService {
                 );
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public Reservation createReservation(
             Long pitchId,
             LocalDate date,
@@ -82,6 +89,12 @@ public class ReservationService {
             String customerPhone
     ) {
 
+        if (pitchId == null || date == null || startTime == null)
+            throw new IllegalArgumentException("Pitch, date and start time are required.");
+        if (!java.time.LocalDateTime.of(date,startTime).isAfter(java.time.LocalDateTime.now(clock)))
+            throw new IllegalArgumentException("Reservations must start in the future.");
+        if (startTime.getSecond() != 0 || startTime.getNano() != 0 || startTime.getMinute() % 30 != 0)
+            throw new IllegalArgumentException("Start time must be on a half-hour boundary.");
         if (durationMinutes == null) {
             throw new IllegalArgumentException(
                     "Reservation duration is required."
@@ -103,7 +116,7 @@ public class ReservationService {
         }
 
         Pitch pitch =
-                pitchRepository.findById(pitchId)
+                pitchRepository.findByIdForUpdate(pitchId)
                         .orElseThrow(() ->
                                 new IllegalArgumentException(
                                         "Pitch not found."
@@ -121,27 +134,9 @@ public class ReservationService {
                         durationMinutes
                 );
 
-        // -----------------------------------------------------
-        // WORKING HOURS
-        // -----------------------------------------------------
-
-        if (startTime.isBefore(
-                LocalTime.of(9, 0)
-        )) {
-
-            throw new IllegalArgumentException(
-                    "Reservations cannot start before 09:00."
-            );
-        }
-
-        if (endTime.isAfter(
-                LocalTime.of(23, 0)
-        )) {
-
-            throw new IllegalArgumentException(
-                    "Reservation cannot end after 23:00."
-            );
-        }
+        var hours = workingHours.getWorkingHours(date.getDayOfWeek());
+        if (hours.isClosed() || !endTime.isAfter(startTime) || startTime.isBefore(hours.getOpeningTime()) || endTime.isAfter(hours.getClosingTime()))
+            throw new IllegalArgumentException("Selected time is outside working hours.");
 
         // -----------------------------------------------------
         // EXISTING RESERVATIONS
@@ -178,7 +173,7 @@ public class ReservationService {
 
             if (overlaps) {
 
-                throw new IllegalArgumentException(
+                throw new BookingConflictException(
                         "This pitch is blocked for the selected time."
                 );
             }
@@ -206,7 +201,7 @@ public class ReservationService {
 
             if (overlaps) {
 
-                throw new IllegalArgumentException(
+                throw new BookingConflictException(
                         "This pitch is already reserved for the selected time."
                 );
             }
@@ -260,32 +255,7 @@ public class ReservationService {
         // SEND CONFIRMATION EMAIL
         // -----------------------------------------------------
 
-        try {
-
-            emailService.sendReservationConfirmation(
-                    savedReservation
-            );
-
-        } catch (Exception e) {
-
-            /*
-             * Резервацията вече е записана.
-             * Email проблемът не трябва да проваля
-             * самата резервация.
-             */
-
-            System.err.println(
-                    "Reservation #" +
-                            savedReservation.getId() +
-                            " was created successfully, " +
-                            "but confirmation email could not be sent."
-            );
-
-            System.err.println(
-                    "Email error: " +
-                            e.getMessage()
-            );
-        }
+        events.publishEvent(new ReservationEmailEvent(savedReservation, false));
 
         return savedReservation;
     }
@@ -294,6 +264,7 @@ public class ReservationService {
     // CANCEL RESERVATION
     // =========================================================
 
+    @org.springframework.transaction.annotation.Transactional
     public Reservation cancelReservation(Long id) {
 
         Reservation reservation =
@@ -333,32 +304,7 @@ public class ReservationService {
         // SEND CANCELLATION EMAIL
         // -----------------------------------------------------
 
-        try {
-
-            emailService.sendReservationCancellation(
-                    savedReservation
-            );
-
-        } catch (Exception e) {
-
-            /*
-             * Отмяната вече е записана.
-             * Email проблемът не трябва да проваля
-             * операцията по отказване.
-             */
-
-            System.err.println(
-                    "Reservation #" +
-                            savedReservation.getId() +
-                            " was cancelled successfully, " +
-                            "but cancellation email could not be sent."
-            );
-
-            System.err.println(
-                    "Email error: " +
-                            e.getMessage()
-            );
-        }
+        events.publishEvent(new ReservationEmailEvent(savedReservation, true));
 
         return savedReservation;
     }

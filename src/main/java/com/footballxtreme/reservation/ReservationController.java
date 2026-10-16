@@ -47,7 +47,7 @@ public class ReservationController {
     // =========================================================
 
     @GetMapping("/pitch/{pitchId}")
-    public List<Reservation> getReservationsForPitchAndDate(
+    public List<com.footballxtreme.reservation.dto.AvailabilitySlot> getReservationsForPitchAndDate(
             @PathVariable Long pitchId,
             @RequestParam LocalDate date
     ) {
@@ -55,7 +55,7 @@ public class ReservationController {
         return reservationService.getReservationsForPitchAndDate(
                 pitchId,
                 date
-        );
+        ).stream().map(com.footballxtreme.reservation.dto.AvailabilitySlot::from).toList();
     }
 
     // =========================================================

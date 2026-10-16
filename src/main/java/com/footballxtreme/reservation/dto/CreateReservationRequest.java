@@ -1,16 +1,24 @@
 package com.footballxtreme.reservation.dto;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class CreateReservationRequest {
 
+    @NotNull @Positive
     private Long pitchId;
+    @NotNull
     private LocalDate date;
+    @NotNull
     private LocalTime startTime;
+    @NotNull
     private Integer durationMinutes;
+    @NotBlank @Size(max=120)
     private String customerName;
+    @NotBlank @Email @Size(max=254)
     private String customerEmail;
+    @NotBlank @Pattern(regexp="[+0-9 ()-]{7,25}")
     private String customerPhone;
 
     public CreateReservationRequest() {

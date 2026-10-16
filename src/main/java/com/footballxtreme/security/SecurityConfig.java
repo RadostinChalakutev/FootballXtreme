@@ -1,248 +1,35 @@
 package com.footballxtreme.security;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
-    ) throws Exception {
-
-        http
-                .csrf(csrf -> csrf.disable())
-
-                .authorizeHttpRequests(auth -> auth
-
-                        // =====================================
-                        // PUBLIC FILES
-                        // =====================================
-
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/style.css",
-                                "/app.js",
-                                "/favicon.ico",
-                                "/admin-login.html",
-                                "/admin-login.css"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // PUBLIC CONFIG
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/config"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // PUBLIC PITCHES
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/pitches"
-                        ).permitAll()
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/pitches/*"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // PUBLIC BLOCKED TIMES
-                        // Клиентът трябва да ги вижда
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/blocked-times"
-                        ).permitAll()
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/blocked-times/pitch/**"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // PUBLIC RESERVATIONS
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/reservations"
-                        ).permitAll()
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/reservations/*/cancel"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // PUBLIC AVAILABILITY
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/reservations/pitch/**"
-                        ).permitAll()
-
-
-                        // =====================================
-                        // ADMIN PITCHES
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/pitches/admin"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/pitches"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/pitches/*"
-                        ).hasRole("ADMIN")
-
-
-                        // =====================================
-                        // ADMIN BLOCKED TIMES
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/blocked-times"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/blocked-times/*"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/blocked-times/*"
-                        ).hasRole("ADMIN")
-
-
-                        // =====================================
-                        // ADMIN RESERVATIONS
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/reservations"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                "/api/reservations/date/**"
-                        ).hasRole("ADMIN")
-
-
-                        // =====================================
-                        // ADMIN ACTIVATE / DEACTIVATE
-                        // =====================================
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/pitches/*/activate"
-                        ).hasRole("ADMIN")
-
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/pitches/*/deactivate"
-                        ).hasRole("ADMIN")
-
-
-                        // =====================================
-                        // EVERYTHING ELSE
-                        // =====================================
-
-                        .anyRequest().authenticated()
-                )
-
-
-                // =====================================
-                // FORM LOGIN
-                // =====================================
-
-                .formLogin(form -> form
-                        .loginPage("/admin-login.html")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/admin.html", true)
-                        .failureUrl("/admin-login.html?error=true")
-                        .permitAll()
-                )
-
-
-                // =====================================
-                // LOGOUT
-                // =====================================
-
-                .logout(logout -> logout
-                        .logoutSuccessUrl("/admin-login.html")
-                        .permitAll()
-                );
-
+    @Bean SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth
+            .requestMatchers("/", "/index.html", "/style.css", "/app.js", "/csrf.js", "/favicon.ico", "/admin-login.html", "/admin-login.css", "/error").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/csrf", "/api/config", "/api/pitches", "/api/working-hours", "/api/working-hours/*", "/api/reservations/pitch/*", "/api/blocked-times/pitch/*").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/reservations").permitAll()
+            .anyRequest().hasRole("ADMIN"))
+            .exceptionHandling(e -> e.defaultAuthenticationEntryPointFor(
+                (request,response,exception) -> response.sendError(401), new AntPathRequestMatcher("/api/**")))
+            .formLogin(form -> form.loginPage("/admin-login.html").loginProcessingUrl("/login")
+                .defaultSuccessUrl("/admin.html",true).failureUrl("/admin-login.html?error=true").permitAll())
+            .logout(logout -> logout.logoutSuccessUrl("/admin-login.html").permitAll());
         return http.build();
     }
-
-
-    // =====================================
-    // ADMIN USER
-    // =====================================
-
-    @Bean
-    public UserDetailsService userDetailsService(
-            PasswordEncoder passwordEncoder
-    ) {
-
-        UserDetails admin =
-                User.builder()
-                        .username("admin")
-                        .password(
-                                passwordEncoder.encode("admin123")
-                        )
-                        .roles("ADMIN")
-                        .build();
-
-        return new InMemoryUserDetailsManager(
-                admin
-        );
+    @Bean UserDetailsService userDetailsService(PasswordEncoder encoder,
+        @Value("${app.admin.username:admin}") String username,
+        @Value("${app.admin.password}") String password) {
+        if (password.length() < 16 || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72)
+            throw new IllegalArgumentException("ADMIN_PASSWORD must contain 16–72 UTF-8 bytes (at least 16 characters).");
+        return new InMemoryUserDetailsManager(User.withUsername(username).password(encoder.encode(password)).roles("ADMIN").build());
     }
-
-
-    // =====================================
-    // PASSWORD ENCODER
-    // =====================================
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-
-        return new BCryptPasswordEncoder();
-    }
+    @Bean PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 }

@@ -178,7 +178,7 @@ function showError(error) {
 }
 
 async function apiFetch(url, options = {}) {
-    const response = await fetch(API + url, {
+    const response = await secureFetch(API + url, {
         ...options,
         headers: {
             ...(options.body !== undefined

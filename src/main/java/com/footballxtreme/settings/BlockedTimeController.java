@@ -11,6 +11,8 @@ import java.util.List;
 @RequestMapping("/api/blocked-times")
 public class BlockedTimeController {
 
+    public record PublicBlockedTime(LocalDate date, LocalTime startTime, LocalTime endTime) {}
+
     private final BlockedTimeService blockedTimeService;
 
     public BlockedTimeController(BlockedTimeService blockedTimeService) {
@@ -23,14 +25,14 @@ public class BlockedTimeController {
     }
 
     @GetMapping("/pitch/{pitchId}")
-    public List<BlockedTime> getBlockedTimes(
+    public List<PublicBlockedTime> getBlockedTimes(
             @PathVariable Long pitchId,
             @RequestParam LocalDate date
     ) {
         return blockedTimeService.getBlockedTimes(
                 pitchId,
                 date
-        );
+        ).stream().map(b -> new PublicBlockedTime(b.getDate(),b.getStartTime(),b.getEndTime())).toList();
     }
 
     @PostMapping

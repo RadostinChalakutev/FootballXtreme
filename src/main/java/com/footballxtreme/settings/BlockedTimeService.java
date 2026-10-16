@@ -13,13 +13,16 @@ public class BlockedTimeService {
 
     private final BlockedTimeRepository blockedTimeRepository;
     private final PitchRepository pitchRepository;
+    private final com.footballxtreme.reservation.ReservationRepository reservations;
 
     public BlockedTimeService(
             BlockedTimeRepository blockedTimeRepository,
-            PitchRepository pitchRepository
+            PitchRepository pitchRepository,
+            com.footballxtreme.reservation.ReservationRepository reservations
     ) {
         this.blockedTimeRepository = blockedTimeRepository;
         this.pitchRepository = pitchRepository;
+        this.reservations = reservations;
     }
 
     public List<BlockedTime> getAllBlockedTimes() {
@@ -36,6 +39,7 @@ public class BlockedTimeService {
         );
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public BlockedTime createBlockedTime(
             Long pitchId,
             LocalDate date,
@@ -44,7 +48,7 @@ public class BlockedTimeService {
             String reason
     ) {
 
-        if (startTime == null || endTime == null) {
+        if (date == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException(
                     "Start time and end time are required."
             );
@@ -56,11 +60,15 @@ public class BlockedTimeService {
             );
         }
 
-        Pitch pitch = pitchRepository.findById(pitchId)
+        Pitch pitch = pitchRepository.findByIdForUpdate(pitchId)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Pitch not found.")
                 );
 
+        for (var reservation : reservations.findActiveReservationsForPitchAndDate(pitchId,date,com.footballxtreme.reservation.ReservationStatus.CONFIRMED)) {
+            if (startTime.isBefore(reservation.getStartTime().plusMinutes(reservation.getDurationMinutes())) && endTime.isAfter(reservation.getStartTime()))
+                throw new com.footballxtreme.reservation.BookingConflictException("Cannot block an existing reservation.");
+        }
         List<BlockedTime> existingBlockedTimes =
                 blockedTimeRepository.findByPitchAndDate(
                         pitchId,
@@ -91,6 +99,7 @@ public class BlockedTimeService {
         return blockedTimeRepository.save(blockedTime);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public BlockedTime updateBlockedTime(
             Long id,
             LocalDate date,
@@ -99,7 +108,7 @@ public class BlockedTimeService {
             String reason
     ) {
 
-        if (startTime == null || endTime == null) {
+        if (date == null || startTime == null || endTime == null) {
             throw new IllegalArgumentException(
                     "Start time and end time are required."
             );
@@ -117,7 +126,12 @@ public class BlockedTimeService {
                 );
 
         Long pitchId = blockedTime.getPitch().getId();
+        pitchRepository.findByIdForUpdate(pitchId).orElseThrow();
 
+        for (var reservation : reservations.findActiveReservationsForPitchAndDate(pitchId,date,com.footballxtreme.reservation.ReservationStatus.CONFIRMED)) {
+            if (startTime.isBefore(reservation.getStartTime().plusMinutes(reservation.getDurationMinutes())) && endTime.isAfter(reservation.getStartTime()))
+                throw new com.footballxtreme.reservation.BookingConflictException("Cannot block an existing reservation.");
+        }
         List<BlockedTime> existingBlockedTimes =
                 blockedTimeRepository.findByPitchAndDate(
                         pitchId,

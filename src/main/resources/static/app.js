@@ -143,24 +143,7 @@ function setMinimumDate() {
         return;
     }
 
-    const today =
-        new Date();
-
-    const year =
-        today.getFullYear();
-
-    const month =
-        String(
-            today.getMonth() + 1
-        ).padStart(2, "0");
-
-    const day =
-        String(
-            today.getDate()
-        ).padStart(2, "0");
-
-    const todayString =
-        `${year}-${month}-${day}`;
+    const todayString = venueNow().date;
 
     dateInput.min =
         todayString;
@@ -189,7 +172,7 @@ async function loadPitches() {
     try {
 
         const response =
-            await fetch(
+            await secureFetch(
                 `${API}/api/pitches`
             );
 
@@ -256,301 +239,53 @@ async function loadPitches() {
    LOAD RESERVATIONS
    ========================================================= */
 
-async function loadReservations() {
-
-    try {
-
-        const response =
-            await fetch(
-                `${API}/api/reservations`,{
-                    cache: "no-store"
-                }
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-        }
-
-        reservations =
-            await response.json();
-
-    } catch (error) {
-
-        console.error(
-            "Reservation loading error:",
-            error
-        );
-
-        reservations = [];
-    }
+let availabilityRequest = 0;
+let workingHours = null;
+let availabilityReady = false;
+function venueNow() {
+    const parts = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/Sofia',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date());
+    const values = Object.fromEntries(parts.map(p=>[p.type,p.value]));
+    return {date: values.year+'-'+values.month+'-'+values.day, minutes:Number(values.hour)*60+Number(values.minute)};
 }
-
-
-/* =========================================================
-   LOAD BLOCKED TIMES
-   ========================================================= */
-
-async function loadBlockedTimes() {
-
-    if (
-        !selectedPitchId ||
-        !selectedDate
-    ) {
-
-        blockedTimes = [];
-
-        return;
-    }
-
-    try {
-
-        const response =
-            await fetch(
-                `${API}/api/blocked-times/pitch/${selectedPitchId}?date=${selectedDate}`
-            );
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-        }
-
-        blockedTimes =
-            await response.json();
-
-    } catch (error) {
-
-        console.error(
-            "Blocked times loading error:",
-            error
-        );
-
-        blockedTimes = [];
-    }
-}
-
-
-/* =========================================================
-   LOAD AVAILABILITY
-   ========================================================= */
-
 async function loadAvailability() {
-
-    const hoursContainer =
-        document.getElementById("hours");
-
-    if (!hoursContainer) {
-        return;
+    const request = ++availabilityRequest;
+    const pitchId = selectedPitchId, date = selectedDate;
+    const container = document.getElementById('hours');
+    availabilityReady = false;
+    if (!container) return;
+    if (!pitchId || !date) { container.textContent = 'Избери игрище и дата.'; return; }
+    try {
+        const day = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][new Date(date+'T12:00:00').getDay()];
+        const urls = ['/api/reservations/pitch/'+pitchId+'?date='+date, '/api/blocked-times/pitch/'+pitchId+'?date='+date, '/api/working-hours/'+day];
+        const data = await Promise.all(urls.map(async url=> {
+            const response=await secureFetch(API+url,{cache:'no-store'});
+            if(!response.ok) throw new Error('Графикът не може да бъде зареден. Опитайте отново.');
+            return response.json();
+        }));
+        if (request !== availabilityRequest) return;
+        [reservations, blockedTimes, workingHours] = data;
+        availabilityReady = true;
+        if (selectedStartTime && getHourStatus(selectedStartTime) !== 'available') {
+            selectedStartTime=null; hideCustomerForm(); updateBookingSummary();
+            showMessage('Избраният час вече не е свободен. Изберете друг.','error');
+        }
+        renderHours();
+    } catch(error) {
+        if (request !== availabilityRequest) return;
+        reservations=[]; blockedTimes=[]; workingHours=null;
+        selectedStartTime=null; hideCustomerForm(); updateBookingSummary();
+        container.textContent=error.message;
     }
-
-    if (
-        !selectedPitchId ||
-        !selectedDate
-    ) {
-
-        hoursContainer.innerHTML = `
-            <div class="hours-placeholder">
-
-                <div class="placeholder-icon">
-                    🕐
-                </div>
-
-                <strong>
-                    Избери игрище и дата
-                </strong>
-
-                <span>
-                    Свободните часове ще се покажат тук.
-                </span>
-
-            </div>
-        `;
-
-        return;
-    }
-
-
-    hoursContainer.innerHTML =
-        `
-            <div class="hours-placeholder">
-
-                <div class="placeholder-icon">
-                    ⏳
-                </div>
-
-                <strong>
-                    Зареждане...
-                </strong>
-
-                <span>
-                    Проверяваме свободните часове.
-                </span>
-
-            </div>
-        `;
-
-
-    await loadReservations();
-
-    await loadBlockedTimes();
-
-    renderHours();
 }
-
-
-/* =========================================================
-   GENERATE HOURS
-   ========================================================= */
-
 function generateHours() {
-
-    const hours = [];
-
-    const seen =
-        new Set();
-
-
-    /*
-     * Стандартни начални часове:
-     *
-     * 09:00
-     * 10:00
-     * 11:00
-     * ...
-     * 22:00
-     */
-
-    for (
-        let hour = 9;
-        hour < 23;
-        hour++
-    ) {
-
-        const time =
-            `${String(hour).padStart(2, "0")}:00`;
-
-        hours.push(time);
-
-        seen.add(time);
+    if (!availabilityReady || !workingHours || workingHours.closed) return [];
+    const hours=[];
+    for(let minutes=Math.ceil(timeToMinutes(workingHours.openingTime)/30)*30;
+        minutes+selectedDuration<=timeToMinutes(workingHours.closingTime); minutes+=30) {
+        hours.push(String(Math.floor(minutes/60)).padStart(2,'0')+':'+String(minutes%60).padStart(2,'0'));
     }
-
-
-    /*
-     * Ако съществува резервация:
-     *
-     * 19:00 - 20:30
-     *
-     * добавяме:
-     *
-     * 20:30
-     *
-     * без да превръщаме целия график
-     * в 30-минутни интервали.
-     */
-
-    reservations
-        .filter(
-            reservation => {
-
-                if (
-                    Number(reservation.pitch?.id) !==
-                    Number(selectedPitchId)
-                ) {
-                    return false;
-                }
-
-                if (
-                    reservation.date !==
-                    selectedDate
-                ) {
-                    return false;
-                }
-
-                if (
-                    reservation.status !==
-                    "CONFIRMED"
-                ) {
-                    return false;
-                }
-
-                return true;
-            }
-        )
-        .forEach(
-            reservation => {
-
-                const start =
-                    timeToMinutes(
-                        reservation.startTime
-                    );
-
-                const duration =
-                    Number(
-                        reservation.durationMinutes ||
-                        0
-                    );
-
-                const end =
-                    start + duration;
-
-
-                /*
-                 * Крайният час трябва
-                 * да е вътре в работното време.
-                 *
-                 * 09:00 <= end < 23:00
-                 */
-
-                if (
-                    end <= 9 * 60 ||
-                    end >= 23 * 60
-                ) {
-                    return;
-                }
-
-
-                const endTime =
-                    addMinutesToTime(
-                        reservation.startTime,
-                        duration
-                    );
-
-
-                if (
-                    !seen.has(endTime)
-                ) {
-
-                    hours.push(
-                        endTime
-                    );
-
-                    seen.add(
-                        endTime
-                    );
-                }
-            }
-        );
-
-
-    /*
-     * Сортиране по час.
-     */
-
-    return hours.sort(
-        (
-            a,
-            b
-        ) =>
-            timeToMinutes(a) -
-            timeToMinutes(b)
-    );
+    return hours;
 }
-
-
 /* =========================================================
    RENDER HOURS
    ========================================================= */
@@ -719,194 +454,16 @@ function renderHours() {
    HOUR STATUS
    ========================================================= */
 
-function getHourStatus(
-    startTime
-) {
-
-    const start =
-        timeToMinutes(
-            startTime
-        );
-
-    const end =
-        start +
-        selectedDuration;
-
-
-    /*
-     * =====================================================
-     * PAST TIME
-     * =====================================================
-     */
-
-    const now =
-        new Date();
-
-    const currentDate =
-        `${now.getFullYear()}-${String(
-            now.getMonth() + 1
-        ).padStart(2, "0")}-${String(
-            now.getDate()
-        ).padStart(2, "0")}`;
-
-
-    if (
-        selectedDate ===
-        currentDate
-    ) {
-
-        const currentMinutes =
-            now.getHours() * 60 +
-            now.getMinutes();
-
-        if (
-            start <=
-            currentMinutes
-        ) {
-
-            return "past";
-        }
-    }
-
-
-    /*
-     * =====================================================
-     * RESERVATIONS
-     * =====================================================
-     */
-
-    const reservationConflict =
-        reservations.some(
-            reservation => {
-
-                if (
-                    Number(
-                        reservation.pitch?.id
-                    ) !==
-                    Number(
-                        selectedPitchId
-                    )
-                ) {
-
-                    return false;
-                }
-
-
-                if (
-                    reservation.date !==
-                    selectedDate
-                ) {
-
-                    return false;
-                }
-
-
-                if (
-                    reservation.status !==
-                    "CONFIRMED"
-                ) {
-
-                    return false;
-                }
-
-
-                const existingStart =
-                    timeToMinutes(
-                        reservation.startTime
-                    );
-
-                const existingEnd =
-                    existingStart +
-                    Number(
-                        reservation.durationMinutes
-                    );
-
-
-                /*
-                 * Реално припокриване:
-                 *
-                 * START < EXISTING END
-                 * END   > EXISTING START
-                 */
-
-                return (
-                    start <
-                    existingEnd &&
-                    end >
-                    existingStart
-                );
-            }
-        );
-
-
-    if (
-        reservationConflict
-    ) {
-
-        return "busy";
-    }
-
-
-    /*
-     * =====================================================
-     * BLOCKED TIMES
-     * =====================================================
-     */
-
-    const blockedConflict =
-        blockedTimes.some(
-            blocked => {
-
-                const blockedStart =
-                    timeToMinutes(
-                        blocked.startTime
-                    );
-
-                const blockedEnd =
-                    timeToMinutes(
-                        blocked.endTime
-                    );
-
-
-                return (
-                    start <
-                    blockedEnd &&
-                    end >
-                    blockedStart
-                );
-            }
-        );
-
-
-    if (
-        blockedConflict
-    ) {
-
-        return "blocked";
-    }
-
-
-    /*
-     * =====================================================
-     * WORKING HOURS
-     * =====================================================
-     */
-
-    if (
-        start <
-        9 * 60 ||
-        end >
-        23 * 60
-    ) {
-
-        return "blocked";
-    }
-
-
-    return "available";
+function getHourStatus(startTime) {
+    if (!availabilityReady || !workingHours || workingHours.closed) return 'blocked';
+    const start=timeToMinutes(startTime), end=start+selectedDuration;
+    const now=venueNow();
+    if(selectedDate<now.date || (selectedDate===now.date && start<=now.minutes)) return 'past';
+    if(start<timeToMinutes(workingHours.openingTime) || end>timeToMinutes(workingHours.closingTime)) return 'blocked';
+    if(reservations.some(r=>start<timeToMinutes(r.startTime)+r.durationMinutes && end>timeToMinutes(r.startTime))) return 'busy';
+    if(blockedTimes.some(r=>start<timeToMinutes(r.endTime) && end>timeToMinutes(r.startTime))) return 'blocked';
+    return 'available';
 }
-
-
 /* =========================================================
    SELECT HOUR
    ========================================================= */
@@ -1066,7 +623,7 @@ function updateBookingSummary() {
     </div>
 
     <div class="summary-selected-title">
-    Резервацията е готова
+    Избран час
     </div>
 
     <div class="summary-details">
@@ -1233,7 +790,12 @@ function showCustomerForm() {
     CREATE RESERVATION
     ========================================================= */
 
+    let bookingInFlight = false;
     async function createReservation() {
+        if (bookingInFlight) return;
+        if (!availabilityReady || getHourStatus(selectedStartTime) !== 'available') {
+            showMessage('Изберете свободен час от актуалния график.','error'); return;
+        }
 
         /*
          * Проверка на избора.
@@ -1339,6 +901,7 @@ function showCustomerForm() {
          * Reservation body.
          */
 
+    bookingInFlight = true;
     const reservationData = {
 
     pitchId:
@@ -1389,7 +952,7 @@ function showCustomerForm() {
     try {
 
     const response =
-    await fetch(
+    await secureFetch(
     `${API}/api/reservations`,
     {
     method: "POST",
@@ -1413,8 +976,7 @@ function showCustomerForm() {
     await response.text();
 
     throw new Error(
-    text ||
-    `HTTP ${response.status}`
+    (() => { try { return JSON.parse(text).detail || `HTTP ${response.status}`; } catch { return `HTTP ${response.status}`; } })()
     );
     }
 
@@ -1484,6 +1046,7 @@ function showCustomerForm() {
     );
 
     } finally {
+    bookingInFlight = false;
 
     if (button) {
 
