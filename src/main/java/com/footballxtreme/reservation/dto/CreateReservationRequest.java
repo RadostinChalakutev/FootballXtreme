@@ -20,6 +20,8 @@ public class CreateReservationRequest {
     private String customerEmail;
     @NotBlank @Pattern(regexp="[+0-9 ()-]{7,25}")
     private String customerPhone;
+    @NotNull @AssertTrue(message = "Terms must be accepted.")
+    private Boolean termsAccepted;
 
     public CreateReservationRequest() {
     }
@@ -78,5 +80,13 @@ public class CreateReservationRequest {
 
     public void setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
+    }
+
+    public Boolean getTermsAccepted() {
+        return termsAccepted;
+    }
+
+    public void setTermsAccepted(Boolean termsAccepted) {
+        this.termsAccepted = termsAccepted;
     }
 }

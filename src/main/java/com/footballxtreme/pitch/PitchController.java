@@ -1,6 +1,7 @@
 package com.footballxtreme.pitch;
 
 import com.footballxtreme.pitch.dto.CreatePitchRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,12 +63,10 @@ public class PitchController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Pitch createPitch(
-            @RequestBody CreatePitchRequest request
+            @Valid @RequestBody CreatePitchRequest request
     ) {
 
-        return pitchService.createPitch(
-                request.getName()
-        );
+        return pitchService.createPitch(request);
 
     }
 

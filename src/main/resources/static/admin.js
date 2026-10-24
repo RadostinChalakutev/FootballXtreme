@@ -3,6 +3,7 @@ const API = "/api";
 let pitches = [];
 let allReservations = [];
 let selectedReservation = null;
+let workingHours = [];
 
 let calendarDate = new Date();
 let selectedCalendarDate = new Date();
@@ -15,6 +16,16 @@ const DAY_NAMES = [
     "THURSDAY",
     "FRIDAY",
     "SATURDAY"
+];
+
+const WORKING_DAYS = [
+    { key: "MONDAY", label: "Понеделник" },
+    { key: "TUESDAY", label: "Вторник" },
+    { key: "WEDNESDAY", label: "Сряда" },
+    { key: "THURSDAY", label: "Четвъртък" },
+    { key: "FRIDAY", label: "Петък" },
+    { key: "SATURDAY", label: "Събота" },
+    { key: "SUNDAY", label: "Неделя" }
 ];
 
 document.addEventListener("DOMContentLoaded", init);
@@ -38,6 +49,7 @@ async function init() {
     initSidebarNavigation();
     setDefaultBlockedDate();
     await loadPitches();
+    await loadWorkingHours();
     await loadAllReservations();
 
     renderCalendar();
@@ -133,6 +145,23 @@ function formatDateBG(value) {
 
 function formatTime(time) {
     return time ? String(time).substring(0, 5) : "";
+}
+
+function formatPitchRate(rate) {
+    if (rate === null || rate === undefined || rate === "") {
+        return "";
+    }
+
+    const value = Number(rate);
+
+    if (!Number.isFinite(value)) {
+        return "";
+    }
+
+    return `${value.toLocaleString("bg-BG", {
+        minimumFractionDigits: value % 1 ? 2 : 0,
+        maximumFractionDigits: 2
+    })} / час`;
 }
 
 function timeToMinutes(time) {
@@ -235,6 +264,145 @@ async function getWorkingHoursForDate(dateString) {
     return apiFetch(`/working-hours/${dayOfWeek}`);
 }
 
+async function loadWorkingHours() {
+    const container = document.getElementById("workingHoursList");
+
+    if (!container) {
+        return;
+    }
+
+    try {
+        workingHours = await apiFetch("/working-hours");
+        renderWorkingHours();
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = `
+            <div class="loading">
+                Работното време не можа да бъде заредено.
+            </div>
+        `;
+    }
+}
+
+function renderWorkingHours() {
+    const container = document.getElementById("workingHoursList");
+
+    if (!container) {
+        return;
+    }
+
+    const byDay = new Map(
+        workingHours.map(hours => [hours.dayOfWeek, hours])
+    );
+
+    container.innerHTML = WORKING_DAYS.map(day => {
+        const hours = byDay.get(day.key);
+        const closed = Boolean(hours?.closed);
+        const openingTime = formatTime(hours?.openingTime) || "09:00";
+        const closingTime = formatTime(hours?.closingTime) || "23:00";
+        const status = hours
+            ? (closed ? "Затворено" : "Активно")
+            : "Не е настроено";
+
+        return `
+            <div class="working-hours-row" data-working-day="${day.key}" data-working-hours-id="${hours?.id || ""}">
+                <div class="working-day-name">
+                    <strong>${day.label}</strong>
+                    <span>${status}</span>
+                </div>
+                <label class="form-group compact-field">
+                    <span>Отваря</span>
+                    <input type="time" data-opening-time value="${escapeHtml(openingTime)}" ${closed ? "disabled" : ""}>
+                </label>
+                <label class="form-group compact-field">
+                    <span>Затваря</span>
+                    <input type="time" data-closing-time value="${escapeHtml(closingTime)}" ${closed ? "disabled" : ""}>
+                </label>
+                <label class="checkbox-field working-hours-closed" for="closed-${day.key}">
+                    <input type="checkbox" id="closed-${day.key}" data-working-hours-closed ${closed ? "checked" : ""}>
+                    Затворено
+                </label>
+                <button class="secondary-btn" type="button" data-save-working-hours="${day.key}">
+                    ${hours ? "Запази" : "Създай"}
+                </button>
+            </div>
+        `;
+    }).join("");
+
+    container
+        .querySelectorAll("[data-working-hours-closed]")
+        .forEach(input => {
+            input.addEventListener("change", () => {
+                syncWorkingHoursRow(input.closest(".working-hours-row"));
+            });
+        });
+
+    container
+        .querySelectorAll("[data-save-working-hours]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                saveWorkingHours(button.dataset.saveWorkingHours);
+            });
+        });
+}
+
+function syncWorkingHoursRow(row) {
+    if (!row) {
+        return;
+    }
+
+    const closed = row.querySelector("[data-working-hours-closed]")?.checked;
+
+    row.querySelectorAll("[data-opening-time], [data-closing-time]")
+        .forEach(input => {
+            input.disabled = Boolean(closed);
+        });
+}
+
+async function saveWorkingHours(dayOfWeek) {
+    const row = document.querySelector(
+        `[data-working-day="${dayOfWeek}"]`
+    );
+
+    if (!row) {
+        return;
+    }
+
+    const openingTime = row.querySelector("[data-opening-time]")?.value;
+    const closingTime = row.querySelector("[data-closing-time]")?.value;
+    const closed = Boolean(
+        row.querySelector("[data-working-hours-closed]")?.checked
+    );
+
+    if (
+        !closed &&
+        (!openingTime || !closingTime || timeToMinutes(openingTime) >= timeToMinutes(closingTime))
+    ) {
+        alert("Началният час трябва да е преди крайния час.");
+        return;
+    }
+
+    const params = new URLSearchParams({
+        openingTime: openingTime || "09:00",
+        closingTime: closingTime || "23:00",
+        closed: String(closed)
+    });
+    const id = row.dataset.workingHoursId;
+    const url = id
+        ? `/working-hours/${id}?${params.toString()}`
+        : `/working-hours?dayOfWeek=${dayOfWeek}&${params.toString()}`;
+
+    try {
+        await apiFetch(url, {
+            method: id ? "PUT" : "POST"
+        });
+        await loadWorkingHours();
+        alert("Работното време е запазено.");
+    } catch (error) {
+        showError(error);
+    }
+}
+
 /* ======================================================
    PITCHES
    ====================================================== */
@@ -268,6 +436,12 @@ function renderPitches() {
     container.innerHTML = pitches.map(pitch => {
 
         const active = pitch.active === true;
+        const details = [
+            pitch.format,
+            pitch.surface,
+            pitch.hasLighting ? "Осветление" : "Без осветление",
+            formatPitchRate(pitch.hourlyRate)
+        ].filter(Boolean);
 
         return `
             <div class="pitch-card">
@@ -284,6 +458,12 @@ function renderPitches() {
                 : "🔴 Неактивно"
         }
                     </div>
+                    ${details.length ? `
+                        <div class="pitch-meta">${details.map(escapeHtml).join(" · ")}</div>
+                    ` : ""}
+                    ${pitch.location ? `
+                        <div class="pitch-location">${escapeHtml(pitch.location)}</div>
+                    ` : ""}
                 </div>
 
                 <div class="pitch-actions">
@@ -408,13 +588,51 @@ async function addPitch() {
         return;
     }
 
+    const rateInput = document.getElementById("newPitchRate");
+    const rate = rateInput?.value;
+    const inputValue = id =>
+        document.getElementById(id)?.value?.trim() || undefined;
+    const payload = {
+        name,
+        format: inputValue("newPitchFormat"),
+        surface: inputValue("newPitchSurface"),
+        description: inputValue("newPitchDescription"),
+        amenities: inputValue("newPitchAmenities"),
+        location: inputValue("newPitchLocation"),
+        accent: inputValue("newPitchAccent"),
+        hasLighting: document.getElementById("newPitchLighting")?.checked ?? true
+    };
+
+    if (rate !== undefined && rate !== "") {
+        payload.hourlyRate = Number(rate);
+    }
+
     try {
         await apiFetch("/pitches", {
             method: "POST",
-            body: JSON.stringify({ name })
+            body: JSON.stringify(payload)
         });
 
         input.value = "";
+        [
+            "newPitchRate",
+            "newPitchSurface",
+            "newPitchLocation",
+            "newPitchAmenities",
+            "newPitchDescription"
+        ].forEach(id => {
+            const field = document.getElementById(id);
+
+            if (field) {
+                field.value = "";
+            }
+        });
+
+        const lighting = document.getElementById("newPitchLighting");
+
+        if (lighting) {
+            lighting.checked = true;
+        }
 
         await loadPitches();
         await loadAllReservations();
@@ -841,7 +1059,7 @@ async function getBlocks(
 ) {
     try {
         return await apiFetch(
-            `/blocked-times/pitch/${pitchId}?date=${dateString}`
+            `/blocked-times/admin/pitch/${pitchId}?date=${dateString}`
         ) || [];
     } catch (error) {
         console.error(
@@ -2299,6 +2517,18 @@ function initSidebarNavigation() {
             id: "timeManagementSection",
             link: document.querySelector(
                 '.sidebar-link[href="#timeManagementSection"]'
+            )
+        },
+        {
+            id: "workingHoursSection",
+            link: document.querySelector(
+                '.sidebar-link[href="#workingHoursSection"]'
+            )
+        },
+        {
+            id: "searchSection",
+            link: document.querySelector(
+                '.sidebar-link[href="#searchSection"]'
             )
         },
         {

@@ -45,6 +45,10 @@
                 <span class="sidebar-icon">⏱️</span>
                 <span>Управление на часовете</span>
             </a>
+            <a href="#workingHoursSection" class="sidebar-link">
+                <span class="sidebar-icon">◷</span>
+                <span>Работно време</span>
+            </a>
             <a href="#searchSection" class="sidebar-link">
                 <span class="sidebar-icon">🔎</span>
                 <span>Търсене</span>
@@ -154,6 +158,20 @@
                 <div class="loading">Изберете игрище и дата.</div>
             </div>
         </section>
+
+        <section class="panel" id="workingHoursSection">
+            <div class="panel-header">
+                <div>
+                    <h2>Работно време</h2>
+                    <p>Настройте часовете, в които клиентите могат да резервират. Затворените дни не приемат резервации.</p>
+                </div>
+            </div>
+
+            <div id="workingHoursList" class="working-hours-list">
+                <div class="loading">Зареждане на работното време...</div>
+            </div>
+        </section>
+
         <section class="panel" id="searchSection">
 
             <div class="panel-header">
@@ -219,10 +237,65 @@
                     >
                 </div>
 
+                <div class="form-group">
+                    <label for="newPitchFormat">Формат</label>
+                    <select id="newPitchFormat">
+                        <option value="5v5">5v5</option>
+                        <option value="6v6">6v6</option>
+                        <option value="7v7">7v7</option>
+                        <option value="8v8">8v8</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="newPitchRate">Цена на час</label>
+                    <input
+                            type="number"
+                            id="newPitchRate"
+                            min="0"
+                            step="0.01"
+                            placeholder="Например: 80"
+                    >
+                </div>
+
                 <button class="primary-btn" id="addPitchButton" type="button">
                     Добави игрище
                 </button>
             </div>
+
+            <details class="pitch-profile-fields">
+                <summary>Допълнителен профил на игрището</summary>
+                <div class="pitch-profile-grid">
+                    <div class="form-group">
+                        <label for="newPitchSurface">Настилка</label>
+                        <input type="text" id="newPitchSurface" placeholder="Например: Изкуствена трева">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPitchLocation">Локация</label>
+                        <input type="text" id="newPitchLocation" placeholder="Например: Ниво 1, северен вход">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPitchAmenities">Удобства</label>
+                        <input type="text" id="newPitchAmenities" placeholder="Например: Съблекални, паркинг">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPitchAccent">Акцентен цвят</label>
+                        <select id="newPitchAccent">
+                            <option value="lime">Лайм</option>
+                            <option value="blue">Син</option>
+                            <option value="orange">Оранжев</option>
+                        </select>
+                    </div>
+                    <div class="form-group pitch-description-field">
+                        <label for="newPitchDescription">Кратко описание</label>
+                        <input type="text" id="newPitchDescription" maxlength="500" placeholder="Какво отличава това игрище?">
+                    </div>
+                    <label class="checkbox-field" for="newPitchLighting">
+                        <input type="checkbox" id="newPitchLighting" checked>
+                        Има осветление
+                    </label>
+                </div>
+            </details>
 
             <div id="pitchList" class="pitch-list">
                 <div class="loading">Зареждане...</div>

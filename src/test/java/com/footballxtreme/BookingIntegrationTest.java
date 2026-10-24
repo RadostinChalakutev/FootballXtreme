@@ -43,11 +43,11 @@ class BookingIntegrationTest {
         for(var day:DayOfWeek.values()) hours.save(new WorkingHours(day,LocalTime.of(9,0),LocalTime.of(23,0),false));
     }
     Reservation book(LocalDate day, LocalTime start, int duration) {
-        return service.createReservation(pitch.getId(),day,start,duration,"Test Customer","test@example.com","0888123456");
+        return service.createReservation(pitch.getId(),day,start,duration,"Test Customer","test@example.com","0888123456",true);
     }
     String body() { return """
         {"pitchId":%d,"date":"%s","startTime":"12:00","durationMinutes":60,
-         "customerName":"Test Customer","customerEmail":"test@example.com","customerPhone":"0888123456"}
+         "customerName":"Test Customer","customerEmail":"test@example.com","customerPhone":"0888123456","termsAccepted":true}
         """.formatted(pitch.getId(),date); }
 
     @Test void publicAvailabilityDoesNotExposePersonalData() throws Exception {
@@ -63,7 +63,7 @@ class BookingIntegrationTest {
         assertThat(reservations.findById(r.getId()).orElseThrow().getStatus()).isEqualTo(ReservationStatus.CONFIRMED);
     }
     @Test void privateListsAndAdminPitchesRequireAuthentication() throws Exception {
-        for(var url:new String[]{"/api/reservations","/api/reservations/search?phone=0888","/api/pitches/admin","/api/blocked-times"})
+        for(var url:new String[]{"/api/reservations","/api/reservations/search?phone=0888","/api/pitches/admin","/api/blocked-times","/api/blocked-times/admin/pitch/1?date="+date})
             mvc.perform(get(url)).andExpect(status().isUnauthorized());
     }
     @Test void csrfRequiredForPublicBooking() throws Exception {

@@ -40,4 +40,6 @@ build/
 .env
 .env.*
 !.env.example
+config/*.properties
+!config/*.example.properties
 config/*.local.properties

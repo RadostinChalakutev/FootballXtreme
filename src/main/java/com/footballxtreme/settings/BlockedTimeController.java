@@ -35,6 +35,18 @@ public class BlockedTimeController {
         ).stream().map(b -> new PublicBlockedTime(b.getDate(),b.getStartTime(),b.getEndTime())).toList();
     }
 
+    /**
+     * The operations console needs the block ID and internal reason to edit a
+     * block. Keep that operational data off the public availability route.
+     */
+    @GetMapping("/admin/pitch/{pitchId}")
+    public List<BlockedTime> getBlockedTimesForAdmin(
+            @PathVariable Long pitchId,
+            @RequestParam LocalDate date
+    ) {
+        return blockedTimeService.getBlockedTimes(pitchId, date);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BlockedTime createBlockedTime(

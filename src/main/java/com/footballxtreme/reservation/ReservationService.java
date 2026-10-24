@@ -1,15 +1,19 @@
 package com.footballxtreme.reservation;
 
-import com.footballxtreme.email.EmailService;
 import com.footballxtreme.pitch.Pitch;
 import com.footballxtreme.pitch.PitchRepository;
 import com.footballxtreme.settings.BlockedTime;
 import com.footballxtreme.settings.BlockedTimeRepository;
+import com.footballxtreme.settings.ClientConfig;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 @Service
 public class ReservationService {
@@ -20,6 +24,7 @@ public class ReservationService {
     private final org.springframework.context.ApplicationEventPublisher events;
     private final com.footballxtreme.settings.WorkingHoursService workingHours;
     private final java.time.Clock clock;
+    private final ClientConfig clientConfig;
 
     public ReservationService(
             ReservationRepository reservationRepository,
@@ -27,7 +32,8 @@ public class ReservationService {
             BlockedTimeRepository blockedTimeRepository,
             org.springframework.context.ApplicationEventPublisher events,
             com.footballxtreme.settings.WorkingHoursService workingHours,
-            java.time.Clock clock
+            java.time.Clock clock,
+            ClientConfig clientConfig
     ) {
         this.reservationRepository = reservationRepository;
         this.pitchRepository = pitchRepository;
@@ -35,6 +41,7 @@ public class ReservationService {
         this.events = events;
         this.workingHours = workingHours;
         this.clock = clock;
+        this.clientConfig = clientConfig;
     }
 
     // =========================================================
@@ -86,7 +93,8 @@ public class ReservationService {
             Integer durationMinutes,
             String customerName,
             String customerEmail,
-            String customerPhone
+            String customerPhone,
+            boolean termsAccepted
     ) {
 
         if (pitchId == null || date == null || startTime == null)
@@ -112,6 +120,12 @@ public class ReservationService {
 
             throw new IllegalArgumentException(
                     "Reservation duration must be 60 or 90 minutes."
+            );
+        }
+
+        if (!termsAccepted) {
+            throw new IllegalArgumentException(
+                    "Terms must be accepted before booking."
             );
         }
 
@@ -242,6 +256,12 @@ public class ReservationService {
                 ReservationStatus.CONFIRMED
         );
 
+        reservation.setReference(generateReference());
+        reservation.setTotalPrice(calculateTotal(pitch, durationMinutes));
+        reservation.setCurrency(resolveCurrency());
+        reservation.setPaymentMethod(PaymentMethod.PAY_ON_SITE);
+        reservation.setTermsAcceptedAt(java.time.LocalDateTime.now(clock));
+
         // -----------------------------------------------------
         // SAVE
         // -----------------------------------------------------
@@ -345,6 +365,37 @@ public class ReservationService {
         }
 
         return normalized;
+    }
+
+    private BigDecimal calculateTotal(Pitch pitch, Integer durationMinutes) {
+        return pitch.getHourlyRate()
+                .multiply(BigDecimal.valueOf(durationMinutes))
+                .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
+    }
+
+    private String resolveCurrency() {
+        String configured = clientConfig.getCurrency();
+        if (configured == null || configured.isBlank()) {
+            return "BGN";
+        }
+
+        String normalized = configured.trim().toUpperCase(Locale.ROOT);
+        if (normalized.equals("EURO")) {
+            return "EUR";
+        }
+        if (normalized.equals("LEV")) {
+            return "BGN";
+        }
+
+        return normalized.matches("[A-Z]{3}") ? normalized : "BGN";
+    }
+
+    private String generateReference() {
+        return "FX-" + UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 10)
+                .toUpperCase(Locale.ROOT);
     }
 
 }

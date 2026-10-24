@@ -1,761 +1,318 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bg">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-            name="theme-color"
-            content="#070b09"
-    >
-
-    <meta
-            name="description"
-            content="FootballXtreme — онлайн резервации за футболни игрища."
-    >
-
-    <title>FootballXtreme — Онлайн резервации</title>
-
-    <link
-            rel="preconnect"
-            href="https://fonts.googleapis.com"
-    >
-
-    <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossorigin
-    >
-
-    <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-            rel="stylesheet"
-    >
-
-    <link
-            rel="stylesheet"
-            href="style.css"
-    >
-<script src="/csrf.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07120c">
+    <meta name="description" content="FootballXtreme Venue OS — професионална система за онлайн резервации на футболни игрища.">
+    <title>FootballXtreme — Резервирай игрище</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="/csrf.js" defer></script>
+    <script src="app.js" defer></script>
 </head>
-
 <body>
-
-<div class="background-decoration background-decoration-one"></div>
-<div class="background-decoration background-decoration-two"></div>
+<a class="skip-link" href="#booking">Към резервацията</a>
 
 <header class="site-header">
-
     <div class="container header-inner">
-
-        <a
-                href="#top"
-                class="brand"
-        >
-            <div class="brand-mark">
-                ⚽
-            </div>
-
-            <div class="brand-copy">
-                <span class="brand-name">
-                    Football<span>Xtreme</span>
-                </span>
-
-                <span class="brand-tagline">
-                    PLAY • BOOK • ENJOY
-                </span>
-            </div>
+        <a class="brand" href="#top" aria-label="FootballXtreme — начало">
+            <span class="brand-mark" aria-hidden="true">FX</span>
+            <span class="brand-copy">
+                <strong>Football<span>Xtreme</span></strong>
+                <small>VENUE OS</small>
+            </span>
         </a>
 
-        <nav class="desktop-nav">
-
-
-
-            <a
-                    href="#booking"
-                    class="nav-link"
-            >
-                Резервация
-            </a>
-
+        <nav class="site-nav" aria-label="Основна навигация">
+            <a href="#how-it-works">Как работи</a>
+            <a href="#pitches">Игрища</a>
+            <a href="#for-venues">За оператори</a>
         </nav>
 
-        <a
-                href="#booking"
-                class="header-book-button"
-        >
-            Резервирай
-        </a>
-
+        <div class="header-actions">
+            <a class="text-action" href="/admin-login.html">Вход за оператор</a>
+            <a class="button button-small" href="#booking">Резервирай</a>
+        </div>
     </div>
-
 </header>
 
-
 <main id="top">
-
     <section class="hero">
-
-        <div class="container hero-inner">
-
-            <div class="hero-badge">
-                <span class="hero-badge-dot"></span>
-                ОНЛАЙН РЕЗЕРВАЦИИ
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <p class="eyebrow"><span></span> ОНЛАЙН ГРАФИК ЗА ТВОЯ ОТБОР</p>
+                <h1>Повече игра.<br><em>По-малко организация.</em></h1>
+                <p class="hero-description">
+                    Виж свободните часове, избери терен и потвърди резервация
+                    за минути — без обаждания и излишна координация.
+                </p>
+                <div class="hero-actions">
+                    <a class="button button-primary" href="#booking">
+                        Виж свободните часове
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5"/></svg>
+                    </a>
+                    <a class="button button-ghost" href="#pitches">Разгледай терените</a>
+                </div>
+                <div class="trust-line">
+                    <span class="pulse-dot" aria-hidden="true"></span>
+                    Наличността се проверява при всяка стъпка
+                </div>
             </div>
 
-            <h1>
-                MORE THAN
-                <span>A GAME</span>
-            </h1>
-
-            <p class="hero-description">
-                Избери игрище, дата и свободен час.
-                <br>
-                Резервирай бързо и лесно.
-            </p>
-
-            <a
-                    href="#booking"
-                    class="hero-button"
-            >
-                Започни резервация
-                <span>→</span>
-            </a>
-
+            <div class="hero-visual" aria-label="Илюстрация на футболен терен">
+                <div class="visual-glow"></div>
+                <div class="pitch-map">
+                    <span class="pitch-line center-line"></span>
+                    <span class="pitch-circle"></span>
+                    <span class="pitch-box pitch-box-left"></span>
+                    <span class="pitch-box pitch-box-right"></span>
+                    <span class="pitch-label pitch-label-top">MATCH DAY</span>
+                    <span class="pitch-label pitch-label-bottom">YOUR SLOT</span>
+                    <span class="pitch-orb orb-one"></span>
+                    <span class="pitch-orb orb-two"></span>
+                    <span class="pitch-orb orb-three"></span>
+                </div>
+                <div class="visual-card visual-card-top">
+                    <span class="mini-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg></span>
+                    <span><b>Избери дата</b><small>Когато ти е удобно</small></span>
+                </div>
+                <div class="visual-card visual-card-bottom">
+                    <span class="availability-dot"></span>
+                    <span><b>Свободен слот</b><small>Потвърждава се веднага</small></span>
+                </div>
+            </div>
         </div>
 
+        <div class="container hero-facts" aria-label="Предимства">
+            <div><strong>01</strong><span>Избираш терен</span></div>
+            <div><strong>02</strong><span>Виждаш свободни часове</span></div>
+            <div><strong>03</strong><span>Получаваш потвърждение</span></div>
+        </div>
     </section>
 
+    <section id="how-it-works" class="process-section section-space">
+        <div class="container section-heading split-heading">
+            <div>
+                <p class="eyebrow"><span></span> ИЗЧИСТЕН ПРОЦЕС</p>
+                <h2>Един график.<br>Ясно решение.</h2>
+            </div>
+            <p>Изградихме потока около това, което отборът реално иска да направи: да намери точния терен и да го запази без чакане.</p>
+        </div>
+        <div class="container process-grid">
+            <article class="process-card">
+                <span class="card-index">01</span>
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 11h24M9 4v5m14-5v5M6 7h20a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/><path d="M9 16h4m6 0h4M9 22h4m6 0h4"/></svg>
+                <h3>Планирай</h3>
+                <p>Избери дата и продължителност според програмата на отбора.</p>
+            </article>
+            <article class="process-card">
+                <span class="card-index">02</span>
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 5h22v22H5z"/><path d="M16 5v22M5 16h22"/><circle cx="16" cy="16" r="5"/></svg>
+                <h3>Резервирай</h3>
+                <p>Избери свободен час. Системата не позволява двойно записване.</p>
+            </article>
+            <article class="process-card">
+                <span class="card-index">03</span>
+                <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 17l6 6L26 9"/></svg>
+                <h3>Играй</h3>
+                <p>Получаваш номер на резервацията и можеш да я добавиш в календара си.</p>
+            </article>
+        </div>
+    </section>
 
-    <section
-            id="booking"
-            class="booking-section"
-    >
+    <section id="pitches" class="pitches-section section-space">
+        <div class="container section-heading">
+            <p class="eyebrow"><span></span> ИЗБЕРИ ПОДХОДЯЩИЯ ТЕРЕН</p>
+            <h2>Игрища, създадени<br>за темпото на мача.</h2>
+            <p>Избери формат, настилка и цена предварително. Всичко важно е на едно място.</p>
+        </div>
+        <div class="container pitch-grid" id="pitchCards" aria-live="polite">
+            <div class="loading-card"><span class="loading-mark"></span> Зареждаме игрищата…</div>
+        </div>
+    </section>
 
-        <div class="container">
+    <section id="booking" class="booking-section section-space" aria-labelledby="booking-heading">
+        <div class="container booking-heading">
+            <div>
+                <p class="eyebrow"><span></span> РЕЗЕРВАЦИЯ</p>
+                <h2 id="booking-heading">Запази своя<br>мач.</h2>
+            </div>
+            <div class="booking-heading-note">
+                <span class="pulse-dot" aria-hidden="true"></span>
+                Свободните часове се актуализират при избора ти
+            </div>
+        </div>
 
-            <div class="section-intro">
-
-                <div>
-
-                    <span class="section-label">
-                        FOOTBALLXTREME BOOKING
-                    </span>
-
-                    <h2>
-                        Резервирай своето игрище
-                    </h2>
-
-                    <p>
-                        Избери последователно игрище, дата,
-                        продължителност и свободен час.
-                    </p>
-
+        <div class="container booking-layout">
+            <div class="booking-main">
+                <div class="booking-stepper" aria-label="Стъпки на резервацията">
+                    <div class="step is-active"><span>01</span><b>Терен</b></div>
+                    <i></i>
+                    <div class="step"><span>02</span><b>Дата и час</b></div>
+                    <i></i>
+                    <div class="step"><span>03</span><b>Потвърждение</b></div>
                 </div>
 
-                <div class="live-status">
-                    <span></span>
-                    ГРАФИК НА ЖИВО
-                </div>
+                <section class="booking-panel" aria-labelledby="selection-heading">
+                    <div class="panel-title-row">
+                        <div>
+                            <p class="section-kicker">СТЪПКА 01</p>
+                            <h3 id="selection-heading">Избери кога играеш</h3>
+                        </div>
+                        <span class="selection-label" id="selectedPitchLabel">Избери терен горе</span>
+                    </div>
 
+                    <div class="booking-controls">
+                        <label class="field-label" for="date">Дата
+                            <span class="date-field">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+                                <input id="date" type="date" required>
+                            </span>
+                        </label>
+                        <div class="field-label">Продължителност
+                            <div class="duration-switch" id="durationOptions" role="group" aria-label="Продължителност на резервацията">
+                                <button type="button" class="duration-option is-active" data-duration="60">60 мин.</button>
+                                <button type="button" class="duration-option" data-duration="90">90 мин.</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="availability-header">
+                        <div>
+                            <p class="section-kicker">СТЪПКА 02</p>
+                            <h3>Свободни часове</h3>
+                        </div>
+                        <span class="availability-date" id="availabilityDate">Избери терен</span>
+                    </div>
+                    <div id="hours" class="hours-grid" aria-live="polite">
+                        <div class="availability-empty">Избери терен, за да видиш свободните часове.</div>
+                    </div>
+                    <div class="availability-legend" aria-label="Легенда за наличността">
+                        <span><i class="legend-dot free"></i> Свободно</span>
+                        <span><i class="legend-dot busy"></i> Заето</span>
+                        <span><i class="legend-dot blocked"></i> Недостъпно</span>
+                    </div>
+                </section>
             </div>
 
-
-            <div class="booking-card">
-
-                <div class="booking-steps">
-
-                    <div class="booking-step active">
-                        <div class="step-number">01</div>
-
-                        <div>
-                            <span>СТЪПКА 01</span>
-                            <strong>Игрище</strong>
-                        </div>
-                    </div>
-
-                    <div class="step-line"></div>
-
-                    <div class="booking-step">
-                        <div class="step-number">02</div>
-
-                        <div>
-                            <span>СТЪПКА 02</span>
-                            <strong>Дата</strong>
-                        </div>
-                    </div>
-
-                    <div class="step-line"></div>
-
-                    <div class="booking-step">
-                        <div class="step-number">03</div>
-
-                        <div>
-                            <span>СТЪПКА 03</span>
-                            <strong>Час</strong>
-                        </div>
-                    </div>
-
+            <aside class="booking-summary" id="bookingSummary" aria-live="polite">
+                <div class="summary-topline"><span>ТВОЯТА РЕЗЕРВАЦИЯ</span><i></i></div>
+                <div id="summaryEmpty" class="summary-empty">
+                    <span class="summary-empty-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v14H5z"/><path d="M12 5v14M5 12h14"/></svg></span>
+                    <h3>Избери свободен час</h3>
+                    <p>Ще покажем ясна цена и детайлите за мача ти тук.</p>
                 </div>
 
-
-                <div class="controls-grid">
-
-                    <div class="control-group">
-
-                        <label for="pitch">
-                            Игрище
-                        </label>
-
-                        <div class="custom-control">
-
-                            <span class="control-icon">
-                                ⚽
-                            </span>
-
-                            <select id="pitch">
-                                <option value="">
-                                    Избери игрище
-                                </option>
-                            </select>
-
-                            <span class="control-arrow">
-                                ▾
-                            </span>
-
-                        </div>
-
+                <div id="summaryDetails" class="summary-details hidden">
+                    <div class="summary-venue">
+                        <span class="summary-pitch-art" id="summaryPitchArt">FX</span>
+                        <div><b id="summaryPitchName">—</b><span id="summaryPitchMeta">—</span></div>
                     </div>
-
-
-                    <div class="control-group">
-
-                        <label for="date">
-                            Дата
-                        </label>
-
-                        <div class="custom-control">
-
-                            <span class="control-icon">
-                                📅
-                            </span>
-
-                            <input
-                                    type="date"
-                                    id="date"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="control-group">
-
-                        <label for="duration">
-                            Продължителност
-                        </label>
-
-                        <div class="custom-control">
-
-                            <span class="control-icon">
-                                ⏱
-                            </span>
-
-                            <select id="duration">
-
-                                <option value="60">
-                                    60 минути
-                                </option>
-
-                                <option value="90">
-                                    90 минути
-                                </option>
-
-                            </select>
-
-                            <span class="control-arrow">
-                                ▾
-                            </span>
-
-                        </div>
-
-                    </div>
-
+                    <dl>
+                        <div><dt>Дата</dt><dd id="summaryDate">—</dd></div>
+                        <div><dt>Час</dt><dd id="summaryTime">—</dd></div>
+                        <div><dt>Продължителност</dt><dd id="summaryDuration">—</dd></div>
+                    </dl>
+                    <div class="summary-price"><span>Общо</span><strong id="summaryPrice">—</strong></div>
+                    <p class="pay-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.4 8.6 8 9 4.6-.4 8-4 8-9V7l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg> Плащане на място. Цената се запазва към резервацията.</p>
                 </div>
 
-
-                <div class="booking-main-grid">
-
-                    <div class="pitch-overview">
-
-                        <div class="pitch-visual">
-
-                            <div class="pitch-visual-grid"></div>
-
-                            <div class="pitch-center-line"></div>
-                            <div class="pitch-center-circle"></div>
-
-                            <div class="pitch-corner top-left"></div>
-                            <div class="pitch-corner top-right"></div>
-                            <div class="pitch-corner bottom-left"></div>
-                            <div class="pitch-corner bottom-right"></div>
-
-                            <div class="pitch-visual-number">
-                                FX
-                            </div>
-
-                        </div>
-
-                        <div class="pitch-overview-copy">
-
-                            <span class="section-label">
-                                ИЗБРАНО ИГРИЩЕ
-                            </span>
-
-                            <h3>
-                                Избери игрище
-                            </h3>
-
-                            <p>
-                                Премиум футболно изживяване,
-                                осветление и удобен достъп.
-                            </p>
-
-                            <div class="feature-row">
-
-                                <span>
-                                    <b>5v5</b>
-                                </span>
-
-                                <span>
-                                    Изкуствена трева
-                                </span>
-
-                                <span>
-                                    Осветление
-                                </span>
-
-                            </div>
-
-                        </div>
-
+                <form id="customerForm" class="customer-form hidden" novalidate>
+                    <div class="form-intro">
+                        <p class="section-kicker">СТЪПКА 03</p>
+                        <h3>Данни за контакт</h3>
+                        <p>Ще използваме данните само за потвърждение на тази резервация.</p>
                     </div>
-
-
-                    <div class="hours-overview">
-
-                        <div class="hours-header">
-
-                            <div>
-
-                                <span class="section-label">
-                                    ИЗБЕРИ ЧАС
-                                </span>
-
-                                <h3>
-                                    Свободни часове
-                                </h3>
-
-                            </div>
-
-                            <div class="duration-badge">
-                                60 мин.
-                            </div>
-
-                        </div>
-
-                        <div
-                                id="hours"
-                                class="hours-grid"
-                        >
-
-                            <p class="hours-placeholder">
-                                Избери игрище и дата.
-                            </p>
-
-                        </div>
-
-                        <div class="legend">
-
-                            <span>
-                                <i class="legend-dot available"></i>
-                                Свободно
-                            </span>
-
-                            <span>
-                                <i class="legend-dot busy"></i>
-                                Заето
-                            </span>
-
-                            <span>
-                                <i class="legend-dot blocked"></i>
-                                Блокирано
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                        id="summaryCard"
-                        class="summary-card hidden"
-                >
-
-                    <div class="summary-icon">
-                        ✓
-                    </div>
-
-                    <div class="summary-content">
-
-                        <span class="section-label">
-                            ИЗБРАН ЧАС
-                        </span>
-
-                        <div id="summaryText">
-                            Избери свободен час.
-                        </div>
-
-                    </div>
-
-                    <button
-                            type="button"
-                            class="summary-change"
-                            id="summaryChangeButton"
-                    >
-                        Смени
+                    <label class="input-label" for="customerName">Име и фамилия
+                        <input id="customerName" name="customerName" type="text" autocomplete="name" maxlength="120" placeholder="Иван Иванов" required>
+                    </label>
+                    <label class="input-label" for="customerPhone">Телефон
+                        <input id="customerPhone" name="customerPhone" type="tel" autocomplete="tel" pattern="[+0-9 ()-]{7,25}" placeholder="+359 88 123 4567" required>
+                    </label>
+                    <label class="input-label" for="customerEmail">Имейл
+                        <input id="customerEmail" name="customerEmail" type="email" autocomplete="email" maxlength="254" placeholder="team@example.com" required>
+                    </label>
+                    <label class="consent-row" for="termsAccepted">
+                        <input id="termsAccepted" name="termsAccepted" type="checkbox" required>
+                        <span>Приемам <button class="inline-link" type="button" data-open-dialog="termsDialog">условията</button> и <button class="inline-link" type="button" data-open-dialog="privacyDialog">политиката за поверителност</button>.</span>
+                    </label>
+                    <button id="reserveButton" class="button button-primary reserve-button" type="submit">
+                        Потвърди резервацията
+                        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5"/></svg>
                     </button>
-
-                </div>
-
-
-                <div
-                        id="customerForm"
-                        class="customer-form hidden"
-                >
-
-                    <div class="customer-form-header">
-
-                        <div>
-
-                            <span class="section-label">
-                                ПОТВЪРЖДЕНИЕ
-                            </span>
-
-                            <h3>
-                                Данни за резервацията
-                            </h3>
-
-                            <p id="selectedTime"></p>
-
-                        </div>
-
-                        <div class="secure-badge">
-                            🔒 Сигурна резервация
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-grid">
-
-                        <div class="control-group">
-
-                            <label for="customerName">
-                                Име и фамилия
-                            </label>
-
-                            <input
-                                    id="customerName"
-                                    type="text"
-                                    placeholder="full name"
-                                    autocomplete="name"
-                            >
-
-                        </div>
-
-
-                        <div class="control-group">
-
-                            <label for="customerPhone">
-                                Телефон
-                            </label>
-
-                            <input
-                                    id="customerPhone"
-                                    type="tel"
-                                    placeholder="+359 ..."
-                                    autocomplete="tel"
-                            >
-
-                        </div>
-
-
-                        <div class="control-group full-width">
-
-                            <label for="customerEmail">
-                                Email
-                            </label>
-
-                            <input
-                                    id="customerEmail"
-                                    type="email"
-                                    autocomplete="email"
-                            >
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                            id="reserveButton"
-                            type="button"
-                            class="reserve-button"
-                            onclick="createReservation()"
-                    >
-                        <span>⚽</span>
-                        РЕЗЕРВИРАЙ
-                    </button>
-
-                </div>
-
-
-                <div
-                        id="message"
-                        class="message"
-                ></div>
-
-            </div>
-
+                    <p id="bookingMessage" class="booking-message" role="status"></p>
+                </form>
+            </aside>
         </div>
-
     </section>
 
-
-    <section
-            id="info"
-            class="info-section"
-    >
-
-        <div class="container info-grid">
-
-            <div class="info-card">
-
-                <span class="info-icon">🏆</span>
-
-                <div>
-                    <strong>
-                        Premium терени
-                    </strong>
-
-                    <span>
-                        Качествена настилка и поддръжка
-                    </span>
-                </div>
-
+    <section id="for-venues" class="operator-section section-space">
+        <div class="container operator-card">
+            <div class="operator-copy">
+                <p class="eyebrow"><span></span> FOOTBALLXTREME VENUE OS</p>
+                <h2>Не само резервации.<br><em>Контрол над деня ти.</em></h2>
+                <p>Същата система дава на оператора защитен календар, управление на игрища и блокирани периоди — без да излага лични данни в публичния график.</p>
+                <a class="button button-ghost-light" href="/admin-login.html">Отвори операторския панел</a>
             </div>
-
-
-            <div class="info-card">
-
-                <span class="info-icon">⚡</span>
-
-                <div>
-                    <strong>
-                        Бърза резервация
-                    </strong>
-
-                    <span>
-                        Всичко става за няколко клика
-                    </span>
-                </div>
-
+            <div class="operator-points">
+                <div><span>01</span><p><b>Контрол на наличността</b><small>Блокирай периоди и управлявай активни терени.</small></p></div>
+                <div><span>02</span><p><b>Ясен дневен график</b><small>Виж резервациите в контекста на всеки терен.</small></p></div>
+                <div><span>03</span><p><b>Вградена защита</b><small>CSRF, ролеви достъп и проверка срещу двойни резервации.</small></p></div>
             </div>
-
-
-            <div class="info-card">
-
-                <span class="info-icon">👥</span>
-
-                <div>
-                    <strong>
-                        За твоя отбор
-                    </strong>
-
-                    <span>
-                        Организирай следващия мач лесно
-                    </span>
-                </div>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <span class="info-icon">📍</span>
-
-                <div>
-                    <strong>
-                        Удобна локация
-                    </strong>
-
-                    <span>
-                        Лесен достъп и паркинг
-                    </span>
-                </div>
-
-            </div>
-
         </div>
-
     </section>
 
+    <section class="faq-section section-space">
+        <div class="container faq-layout">
+            <div><p class="eyebrow"><span></span> ПРЕДИ ДА ЗАПОЧНЕШ</p><h2>Няколко важни<br>отговора.</h2></div>
+            <div class="faq-list">
+                <details open><summary>Кога се потвърждава резервацията?<span>+</span></summary><p>Веднага след успешно изпращане ще видиш номер на резервацията. При налична имейл конфигурация изпращаме и потвърждение по имейл.</p></details>
+                <details><summary>Как се плаща?<span>+</span></summary><p>Този стартов поток е настроен за плащане на място. Сумата се записва към резервацията, а онлайн плащане може да се добави като интеграция за конкретния оператор.</p></details>
+                <details><summary>Какво става при промяна на програмата?<span>+</span></summary><p>За промяна или отказ се свържи директно с оператора на комплекса. Преди публичен старт операторът трябва да публикува собствена политика за отказ.</p></details>
+            </div>
+        </div>
+    </section>
 </main>
 
-
-<footer
-        id="footer"
-        class="site-footer"
->
-
-    <div class="container footer-inner">
-
-        <div class="brand footer-brand">
-
-            <div class="brand-mark">
-                ⚽
-            </div>
-
-            <div class="brand-copy">
-
-                <span class="brand-name">
-                    Football<span>Xtreme</span>
-                </span>
-
-                <span class="brand-tagline">
-                    PLAY • BOOK • ENJOY
-                </span>
-
-            </div>
-
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <a class="brand footer-brand" href="#top">
+                <span class="brand-mark" aria-hidden="true">FX</span>
+                <span class="brand-copy"><strong>Football<span>Xtreme</span></strong><small>VENUE OS</small></span>
+            </a>
+            <p>Професионална система за резервации и операции на футболни комплекси.</p>
         </div>
-
-
-        <div class="footer-center">
-            © 2026 FootballXtreme. Всички права запазени.
-        </div>
-
-
-        <div class="footer-right">
-            FOOTBALL BRINGS US TOGETHER
-        </div>
-
+        <div class="footer-column"><span>НАВИГАЦИЯ</span><a href="#pitches">Игрища</a><a href="#booking">Резервирай</a><a href="#for-venues">За оператори</a></div>
+        <div class="footer-column" id="venueContact"><span>КОНТАКТ</span><a id="venuePhone" href="tel:"></a><a id="venueEmail" href="mailto:"></a><p id="venueAddress"></p></div>
     </div>
-
+    <div class="container footer-bottom"><span>© <span id="footerYear"></span> FootballXtreme. Всички права запазени.</span><span>BOOK SMART. PLAY MORE.</span></div>
 </footer>
 
+<dialog id="successDialog" class="success-dialog" aria-labelledby="successTitle">
+    <div class="success-symbol"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m7 16 6 6L26 9"/></svg></div>
+    <p class="section-kicker">РЕЗЕРВАЦИЯТА Е ПОТВЪРДЕНА</p>
+    <h2 id="successTitle">Готово. Мачът е в календара.</h2>
+    <p id="successDescription">Ще получиш детайлите и по имейл.</p>
+    <div class="reference-box"><span>НОМЕР НА РЕЗЕРВАЦИЯ</span><strong id="confirmationReference">—</strong></div>
+    <div class="dialog-actions"><button id="calendarButton" class="button button-primary" type="button">Добави в календара</button><button id="closeSuccessButton" class="button button-ghost" type="button">Затвори</button></div>
+</dialog>
 
-<script src="app.js"></script>
+<dialog id="termsDialog" class="legal-dialog">
+    <button class="dialog-close" type="button" data-close-dialog="termsDialog" aria-label="Затвори">×</button>
+    <p class="section-kicker">ШАБЛОН ЗА ОПЕРАТОР</p><h2>Условия за резервация</h2>
+    <p>Резервацията важи за посочените дата, час и терен. Цената и правилата за отказ се определят от оператора на конкретния комплекс.</p>
+    <p>Преди продукционен старт заменете този шаблон с одобрени от юридическия ви екип условия и данни за оператора.</p>
+</dialog>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const duration =
-            document.getElementById("duration");
-
-        const durationBadge =
-            document.querySelector(".duration-badge");
-
-        const summaryCard =
-            document.getElementById("summaryCard");
-
-        const summaryText =
-            document.getElementById("summaryText");
-
-        const summaryChangeButton =
-            document.getElementById("summaryChangeButton");
-
-        const pitch =
-            document.getElementById("pitch");
-
-        const durationObserver = () => {
-
-            if (!duration || !durationBadge) {
-                return;
-            }
-
-            durationBadge.textContent =
-                `${duration.value} мин.`;
-
-        };
-
-        duration?.addEventListener(
-            "change",
-            durationObserver
-        );
-
-        summaryChangeButton?.addEventListener(
-            "click",
-            () => {
-                document
-                    .getElementById("hours")
-                    ?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-            }
-        );
-
-        const originalShowCustomerForm =
-            window.showCustomerForm;
-
-        if (typeof originalShowCustomerForm === "function") {
-
-            window.showCustomerForm = function() {
-
-                originalShowCustomerForm();
-
-                if (
-                    summaryCard &&
-                    summaryText &&
-                    window.selectedStartTime
-                ) {
-
-                    summaryCard.classList.remove(
-                        "hidden"
-                    );
-
-                    summaryText.textContent =
-                        `${window.selectedStartTime}`;
-
-                }
-
-            };
-
-        }
-
-        pitch?.addEventListener(
-            "change",
-            () => {
-                if (!pitch.value && summaryCard) {
-                    summaryCard.classList.add("hidden");
-                }
-            }
-        );
-
-        durationObserver();
-
-    });
-</script>
-
+<dialog id="privacyDialog" class="legal-dialog">
+    <button class="dialog-close" type="button" data-close-dialog="privacyDialog" aria-label="Затвори">×</button>
+    <p class="section-kicker">ШАБЛОН ЗА ОПЕРАТОР</p><h2>Поверителност</h2>
+    <p>Името, телефонът и имейлът са нужни за потвърждение и управление на резервацията. Публичният график не показва лични данни.</p>
+    <p>Преди продукционен старт добавете собствена политика за обработване, срокове за съхранение и контакти на администратора на данните.</p>
+</dialog>
 </body>
 </html>

@@ -532,6 +532,105 @@ button {
     gap: 8px;
 }
 
+.pitch-meta,
+.pitch-location {
+    margin-top: 6px;
+    color: #4b5563;
+    font-size: 13px;
+}
+
+.pitch-profile-fields {
+    margin: -4px 0 22px;
+    padding: 14px 16px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.pitch-profile-fields summary {
+    cursor: pointer;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.pitch-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.pitch-description-field {
+    grid-column: 1 / -1;
+}
+
+.checkbox-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 43px;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    accent-color: #111827;
+}
+
+.working-hours-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.working-hours-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 1fr) 130px 130px 120px auto;
+    align-items: end;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.working-day-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 4px;
+}
+
+.working-day-name strong {
+    color: #111827;
+}
+
+.working-day-name span {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.compact-field {
+    gap: 5px;
+}
+
+.compact-field span {
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.working-hours-row .secondary-btn {
+    white-space: nowrap;
+}
+
 .blocked-time-grid {
     margin-top: 10px;
 }
@@ -1011,5 +1110,27 @@ button {
 
     .search-result-status {
         align-self: flex-start;
+    }
+
+    .pitch-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pitch-description-field {
+        grid-column: auto;
+    }
+
+    .working-hours-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: end;
+    }
+
+    .working-day-name {
+        grid-column: 1 / -1;
+    }
+
+    .working-hours-row .checkbox-field,
+    .working-hours-row .secondary-btn {
+        width: 100%;
     }
 }

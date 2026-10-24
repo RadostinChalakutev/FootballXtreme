@@ -13,7 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
     @Bean SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/index.html", "/style.css", "/app.js", "/csrf.js", "/favicon.ico", "/admin-login.html", "/admin-login.css", "/error").permitAll()
+            .requestMatchers("/", "/index.html", "/style.css", "/app.js", "/csrf.js", "/favicon.ico", "/admin-login.html", "/admin-login.css", "/error", "/actuator/health").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/csrf", "/api/config", "/api/pitches", "/api/working-hours", "/api/working-hours/*", "/api/reservations/pitch/*", "/api/blocked-times/pitch/*").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/reservations").permitAll()
             .anyRequest().hasRole("ADMIN"))

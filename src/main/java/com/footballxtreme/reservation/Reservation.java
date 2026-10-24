@@ -4,7 +4,9 @@ import com.footballxtreme.pitch.Pitch;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "reservations")
@@ -39,6 +41,22 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReservationStatus status;
+
+    @Column(unique = true, length = 24)
+    private String reference;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal totalPrice;
+
+    @Column(length = 3)
+    private String currency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 32)
+    private PaymentMethod paymentMethod;
+
+    @Column
+    private LocalDateTime termsAcceptedAt;
 
     public Reservation() {
     }
@@ -109,5 +127,45 @@ public class Reservation {
 
     public void setStatus(ReservationStatus status) {
         this.status = status;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public LocalDateTime getTermsAcceptedAt() {
+        return termsAcceptedAt;
+    }
+
+    public void setTermsAcceptedAt(LocalDateTime termsAcceptedAt) {
+        this.termsAcceptedAt = termsAcceptedAt;
     }
 }

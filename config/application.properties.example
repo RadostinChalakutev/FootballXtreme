@@ -1,0 +1,3 @@
+# Optional local Spring overrides. Copy to config/application.properties; never commit real credentials.
+app.time-zone=Europe/Sofia
+server.servlet.session.cookie.secure=false

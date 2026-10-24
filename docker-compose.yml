@@ -1,0 +1,57 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: footballxtreme:local
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: "jdbc:postgresql://db:5432/${POSTGRES_DB:-footballxtreme}"
+      DB_USERNAME: "${DB_USERNAME:?DB_USERNAME must be set in .env or the shell}"
+      DB_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD must be set in .env or the shell}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME:-admin}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?ADMIN_PASSWORD must be set in .env or the shell}"
+      RESEND_API_KEY: "${RESEND_API_KEY:-}"
+      RESEND_FROM_EMAIL: "${RESEND_FROM_EMAIL:-}"
+      DDL_AUTO: "${DDL_AUTO:-validate}"
+      DEMO_DATA_ENABLED: "${DEMO_DATA_ENABLED:-true}"
+      COOKIE_SECURE: "${COOKIE_SECURE:-false}"
+      APP_TIME_ZONE: "${APP_TIME_ZONE:-Europe/Sofia}"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - ./config:/app/config:ro
+    networks:
+      - edge
+      - private
+
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-footballxtreme}"
+      POSTGRES_USER: "${DB_USERNAME:?DB_USERNAME must be set in .env or the shell}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:?DB_PASSWORD must be set in .env or the shell}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks:
+      - private
+
+volumes:
+  postgres_data:
+
+networks:
+  edge:
+  private:
+    internal: true

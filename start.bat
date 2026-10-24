@@ -2,31 +2,28 @@
 setlocal
 
 cd /d "%~dp0"
+set "FX_JAR=target\football-xtreme-1.0.0.jar"
 
 echo.
 echo ==========================================
-echo          FOOTBALLXTREME
+echo       FOOTBALLXTREME VENUE OS
 echo ==========================================
 echo.
 
-echo Starting application...
-
-start "" /B "%~dp0runtime\bin\java.exe" -jar "%~dp0target\football-xtreme-1.0.0.jar"
-
-echo Waiting for FootballXtreme...
-
-:wait
-powershell -NoProfile -ExecutionPolicy Bypass -Command "try { $r = Invoke-WebRequest -Uri 'http://localhost:8080/api/config' -UseBasicParsing -TimeoutSec 2; if ($r.StatusCode -eq 200) { exit 0 } else { exit 1 } } catch { exit 1 }"
-
+where java >nul 2>nul
 if errorlevel 1 (
-    timeout /t 2 /nobreak >nul
-    goto wait
+    echo Java 25 is required and was not found on PATH.
+    echo Use Docker Compose or install Java 25, then run this file again.
+    exit /b 1
 )
 
-echo.
-echo FootballXtreme is ready.
-echo Opening browser...
+if not exist "%FX_JAR%" (
+    echo Build artifact not found: %FX_JAR%
+    echo Run "mvn clean package" first, or use "docker compose up --build".
+    exit /b 1
+)
 
-start "" "http://localhost:8080"
+echo Starting FootballXtreme on http://localhost:8080 ...
+java -jar "%FX_JAR%"
 
-exit /b 0
+endlocal

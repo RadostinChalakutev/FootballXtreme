@@ -4,7 +4,10 @@ import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.footballxtreme.reservation.Reservation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -14,24 +17,21 @@ public class EmailService {
 
     private static final DateTimeFormatter TIME_FORMAT =
             DateTimeFormatter.ofPattern("HH:mm");
+    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     private final Resend resend;
+    private final String fromEmail;
 
-    public EmailService() {
+    public EmailService(
+            @Value("${RESEND_API_KEY:}") String apiKey,
+            @Value("${RESEND_FROM_EMAIL:}") String fromEmail
+    ) {
+        this.fromEmail = fromEmail == null ? "" : fromEmail.trim();
+        this.resend = apiKey == null || apiKey.isBlank() ? null : new Resend(apiKey);
 
-        String apiKey =
-                System.getenv("RESEND_API_KEY");
-
-        if (apiKey == null ||
-                apiKey.isBlank()) {
-
-            throw new IllegalStateException(
-                    "RESEND_API_KEY environment variable is not configured."
-            );
+        if (this.resend == null) {
+            log.warn("Transactional email is disabled because RESEND_API_KEY is not configured.");
         }
-
-        this.resend =
-                new Resend(apiKey);
     }
 
     // =========================================================
@@ -968,21 +968,20 @@ public class EmailService {
             String html
     ) {
 
+        if (resend == null) {
+            log.info("Skipping transactional email because no Resend client is configured.");
+            return;
+        }
+
         try {
 
-            String fromEmail =
-                    System.getenv("RESEND_FROM_EMAIL");
-
-            if (fromEmail == null ||
-                    fromEmail.isBlank()) {
-
-                fromEmail =
-                        "FootballXtreme <onboarding@resend.dev>";
-            }
+            String sender = fromEmail.isBlank()
+                    ? "FootballXtreme <onboarding@resend.dev>"
+                    : fromEmail;
 
             CreateEmailOptions params =
                     CreateEmailOptions.builder()
-                            .from(fromEmail)
+                            .from(sender)
                             .to(customerEmail)
                             .subject(subject)
                             .text(text)

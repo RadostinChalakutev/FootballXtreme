@@ -2,9 +2,13 @@ package com.footballxtreme.settings;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.validation.constraints.Pattern;
 
 
 @Configuration
+@Validated
 @ConfigurationProperties(prefix = "app.client")
 public class ClientConfig {
 
@@ -14,7 +18,8 @@ public class ClientConfig {
     private String email;
     private String address;
     private String language;
-    private String currency;
+    @Pattern(regexp = "^[A-Z]{3}$", message = "app.client.currency must be an ISO 4217 alpha-3 code.")
+    private String currency = "BGN";
 
     public String getName() {
         return name;

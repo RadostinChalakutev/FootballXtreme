@@ -1,6 +1,7 @@
 package com.footballxtreme.reservation;
 
 import com.footballxtreme.reservation.dto.CreateReservationRequest;
+import com.footballxtreme.reservation.dto.BookingConfirmation;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -64,19 +65,22 @@ public class ReservationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Reservation createReservation(
+    public BookingConfirmation createReservation(
             @Valid @RequestBody CreateReservationRequest request
     ) {
 
-        return reservationService.createReservation(
+        Reservation reservation = reservationService.createReservation(
                 request.getPitchId(),
                 request.getDate(),
                 request.getStartTime(),
                 request.getDurationMinutes(),
                 request.getCustomerName(),
                 request.getCustomerEmail(),
-                request.getCustomerPhone()
+                request.getCustomerPhone(),
+                Boolean.TRUE.equals(request.getTermsAccepted())
         );
+
+        return BookingConfirmation.from(reservation);
     }
 
     // =========================================================

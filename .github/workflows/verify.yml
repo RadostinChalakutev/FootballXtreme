@@ -35,4 +35,4 @@ jobs:
           node-version: '24'
       - run: mvn -B verify
       - run: node --test src/test/js/availability.test.cjs
-      - run: node --check src/main/resources/static/admin.js && node --check src/main/resources/static/csrf.js
+      - run: node --check src/main/resources/static/app.js && node --check src/main/resources/static/admin.js && node --check src/main/resources/static/csrf.js

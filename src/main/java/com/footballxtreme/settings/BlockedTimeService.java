@@ -163,13 +163,14 @@ public class BlockedTimeService {
         return blockedTimeRepository.save(blockedTime);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     public void deleteBlockedTime(Long id) {
-        if (!blockedTimeRepository.existsById(id)) {
-            throw new IllegalArgumentException(
-                    "Blocked time not found."
-            );
-        }
+        BlockedTime blockedTime = blockedTimeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Blocked time not found."));
 
-        blockedTimeRepository.deleteById(id);
+        pitchRepository.findByIdForUpdate(blockedTime.getPitch().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Pitch not found."));
+
+        blockedTimeRepository.delete(blockedTime);
     }
 }

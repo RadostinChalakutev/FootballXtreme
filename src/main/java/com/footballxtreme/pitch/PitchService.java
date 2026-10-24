@@ -1,7 +1,9 @@
 package com.footballxtreme.pitch;
 
+import com.footballxtreme.pitch.dto.CreatePitchRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -51,12 +53,52 @@ public class PitchService {
     // CREATE
     // ==========================================
 
+    public Pitch createPitch(CreatePitchRequest request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Pitch details are required.");
+        }
+
+        return createPitch(
+                request.getName(),
+                request.getDescription(),
+                request.getFormat(),
+                request.getSurface(),
+                request.getHasLighting(),
+                request.getHourlyRate(),
+                request.getAmenities(),
+                request.getLocation(),
+                request.getAccent()
+        );
+    }
+
     public Pitch createPitch(String name) {
+        return createPitch(name, null, null, null, null, null, null, null, null);
+    }
+
+    private Pitch createPitch(
+            String name,
+            String description,
+            String format,
+            String surface,
+            Boolean hasLighting,
+            BigDecimal hourlyRate,
+            String amenities,
+            String location,
+            String accent
+    ) {
 
         validateName(name);
 
-        Pitch pitch =
-                new Pitch(name.trim());
+        Pitch pitch = new Pitch(name.trim());
+        pitch.setDescription(trimToNull(description));
+        pitch.setFormat(defaultIfBlank(format, Pitch.DEFAULT_FORMAT));
+        pitch.setSurface(defaultIfBlank(surface, Pitch.DEFAULT_SURFACE));
+        pitch.setHasLighting(hasLighting == null || hasLighting);
+        pitch.setHourlyRate(hourlyRate == null ? Pitch.DEFAULT_HOURLY_RATE : hourlyRate);
+        pitch.setAmenities(trimToNull(amenities));
+        pitch.setLocation(trimToNull(location));
+        pitch.setAccent(defaultIfBlank(accent, "lime"));
 
         return pitchRepository.save(pitch);
     }
@@ -147,6 +189,20 @@ public class PitchService {
 
         }
 
+    }
+
+    private String defaultIfBlank(String value, String fallback) {
+        String normalized = trimToNull(value);
+        return normalized == null ? fallback : normalized;
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String normalized = value.trim();
+        return normalized.isEmpty() ? null : normalized;
     }
 
 }

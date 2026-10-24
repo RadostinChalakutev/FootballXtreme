@@ -1,0 +1,8 @@
+# Optional white-label venue profile. Copy to config/client.properties.
+app.client.name=Example Football Club
+app.client.short-name=Example FC
+app.client.phone=+359 88 000 0000
+app.client.email=bookings@example.com
+app.client.address=Sample venue address, Sofia
+app.client.language=bg
+app.client.currency=BGN

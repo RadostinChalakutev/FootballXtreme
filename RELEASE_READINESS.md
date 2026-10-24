@@ -17,9 +17,9 @@ This repository is a Spring Boot/Java 25 application with a static JavaScript UI
 
 1. Use Java 25, Maven 3.9 and PostgreSQL. Copy the variable names from `.env.example` into the deployment environment. Spring does **not** automatically load `.env` files.
 2. Set unique `DB_PASSWORD` and `ADMIN_PASSWORD`, a valid `RESEND_API_KEY`, and a verified `RESEND_FROM_EMAIL`. Never commit real values. The sender must belong to your verified Resend domain.
-3. For an empty development database only, set `DDL_AUTO=update` to create the schema. Production defaults to `validate`; prepare and review a schema migration before rollout. Back up an existing database before any schema work.
+3. Flyway applies the bundled versioned schema migrations. Keep `DDL_AUTO=validate` in normal development and production, add reviewed forward-only migrations for every schema change, and back up an existing database before rollout.
 4. Start with `mvn spring-boot:run` or `java -jar target/football-xtreme-1.0.0.jar`. For local HTTP, set `COOKIE_SECURE=false`; production must use HTTPS and `COOKIE_SECURE=true`.
-5. Sign in at `/admin-login.html` and create at least one active pitch. Configure all seven days through the authenticated `/api/working-hours` API (POST parameters: `dayOfWeek`, `openingTime`, `closingTime`, `closed`; include the CSRF token from `/api/csrf`). Missing hours intentionally prevent bookings. A working-hours administration screen is still needed.
+5. Sign in at `/admin-login.html`, create at least one active pitch and configure all seven days through the **Работно време** section. Missing hours intentionally prevent bookings. The authenticated `/api/working-hours` API remains available for integrations.
 6. Run `mvn verify` and `node --test src/test/js/availability.test.cjs`. Tests use a disposable H2 database by default. Set `TEST_DB_URL`, `TEST_DB_USER`, `TEST_DB_PASSWORD` to an **empty disposable PostgreSQL database** to run the same tests against PostgreSQL. Tests create/drop their schema. CI uses a dedicated PostgreSQL 17 service and Java 25.
 
 ## Required before a paid pilot
@@ -27,8 +27,8 @@ This repository is a Spring Boot/Java 25 application with a static JavaScript UI
 1. **Rotate exposed credentials:** database/mail credentials were committed previously. Removing them here does not remove them from Git history. Rotate at the providers, inspect access logs, and separately plan history cleanup. No provider credentials have been rotated by this change.
 2. **Booking abuse:** add verified contact ownership (OTP/email link), per-client and per-venue rate limits, booking horizon/quotas, and idempotency keys. CSRF alone does not prevent spam or deliberate slot exhaustion.
 3. **Reliable notifications:** durable outbox, retries, delivery monitoring and a reconciliation screen. An email failure currently leaves the reservation confirmed. Tell customers this clearly in the final product flow.
-4. **Product completeness:** define prices, taxes, deposits/refunds, cancellation policy, customer self-service with secure ownership checks, and venue/operator workflows. Add a working-hours screen, accessibility review and mobile end-to-end tests.
-5. **Operations:** reviewed versioned migrations, encrypted backups with a restore drill, monitoring/alerts, retention/deletion rules, HTTPS deployment, session/login rate limiting and a staging acceptance run. Configure secrets and run an actual email delivery test using your own account.
+4. **Product completeness:** define prices, taxes, deposits/refunds, cancellation policy, customer self-service with secure ownership checks, venue/operator workflows, accessibility review and mobile end-to-end tests.
+5. **Operations:** encrypted backups with a restore drill, monitoring/alerts, retention/deletion rules, HTTPS deployment, session/login rate limiting and a staging acceptance run. Configure secrets and run an actual email delivery test using your own account.
 6. **Load and consistency:** run concurrency/load tests against the deployed PostgreSQL version and multiple app instances. Opening hours are checked at booking time; changing hours does not automatically move/cancel existing bookings. Pitch-level locking trades throughput for correctness and should be measured for large venues.
 
-Do not merge and deploy automatically: an existing deployment needs new environment variables and working-hours configuration first. No payment collection, production deployment or schema migration is included here.
+Do not merge and deploy automatically: an existing deployment needs new environment variables, a Flyway baseline/upgrade plan and working-hours configuration first. No payment collection or production deployment is included here.
