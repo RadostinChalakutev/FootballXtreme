@@ -19,7 +19,7 @@ public class ClientConfig {
     private String address;
     private String language;
     @Pattern(regexp = "^[A-Z]{3}$", message = "app.client.currency must be an ISO 4217 alpha-3 code.")
-    private String currency = "BGN";
+    private String currency = "EUR";
 
     public String getName() {
         return name;
