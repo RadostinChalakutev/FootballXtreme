@@ -102,6 +102,7 @@ For a portfolio presentation, capture the public booking page, the admin calenda
 | `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | Resend credentials and verified sender for transactional emails. |
 | `COOKIE_SECURE` | Use `false` only for local HTTP. Set `true` behind production HTTPS. |
 | `DDL_AUTO` | Keep `validate` for normal development and production; Flyway owns the versioned schema. |
+| `FLYWAY_BASELINE_ON_MIGRATE` | Defaults to `true` for the first upgrade from the recognized legacy schema. A guard checks the original tables and columns before recording V1. Set `false` after a successful upgrade. |
 | `DEMO_DATA_ENABLED` | Set `true` only on an empty demo database to seed three sample pitches and opening hours. |
 | `APP_TIME_ZONE` | Optional Spring relaxed-binding override for the venue time zone; defaults to `Europe/Sofia`. |
 
@@ -116,13 +117,15 @@ mvn verify
 node --test src/test/js/availability.test.cjs
 ```
 
-The Java test suite uses a disposable H2 database by default. Set `TEST_DB_URL`, `TEST_DB_USER` and `TEST_DB_PASSWORD` to run it against an empty disposable PostgreSQL database.
+The Java test suite uses a disposable H2 database by default. Set `TEST_DB_URL`, `TEST_DB_USER` and `TEST_DB_PASSWORD` to run it against an empty disposable PostgreSQL database. Tests cover fresh migrations, upgrades with existing bookings, repeat startup, and rejection of unrelated or partially upgraded schemas. Booking tests validate the Flyway-created schema instead of recreating it with Hibernate.
 
 ## Deployment and commercial readiness
 
 Docker Compose makes the project easy to demonstrate or deploy as a single-host pilot. A paid production deployment still needs the operational work expected of a real B2B product: HTTPS termination, a secret manager, encrypted backups and restore drills, monitoring, delivery/retry handling for email, booking-abuse controls and a staging acceptance run.
 
 See [docs/PRODUCT.md](docs/PRODUCT.md) for positioning and product scope, [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for a deployment runbook, and [RELEASE_READINESS.md](RELEASE_READINESS.md) for the detailed release-risk baseline.
+
+For the Render error `Found non-empty schema(s) "public" but no schema history table`, see [Upgrading the existing Render database](docs/DEPLOYMENT.md#upgrading-the-existing-render-database).
 
 ## Repository map
 

@@ -17,10 +17,10 @@ This repository is a Spring Boot/Java 25 application with a static JavaScript UI
 
 1. Use Java 25, Maven 3.9 and PostgreSQL. Copy the variable names from `.env.example` into the deployment environment. Spring does **not** automatically load `.env` files.
 2. Set unique `DB_PASSWORD` and `ADMIN_PASSWORD`, a valid `RESEND_API_KEY`, and a verified `RESEND_FROM_EMAIL`. Never commit real values. The sender must belong to your verified Resend domain.
-3. Flyway applies the bundled versioned schema migrations. Keep `DDL_AUTO=validate` in normal development and production, add reviewed forward-only migrations for every schema change, and back up an existing database before rollout.
+3. Flyway applies the bundled versioned schema migrations. Keep `DDL_AUTO=validate` in normal development and production, add reviewed forward-only migrations for every schema change, and back up an existing database before rollout. The first upgrade recognizes the legacy tables/columns before baselining at V1; see the [Render upgrade guide](docs/DEPLOYMENT.md#upgrading-the-existing-render-database). Set `FLYWAY_BASELINE_ON_MIGRATE=false` after a successful upgrade.
 4. Start with `mvn spring-boot:run` or `java -jar target/football-xtreme-1.0.0.jar`. For local HTTP, set `COOKIE_SECURE=false`; production must use HTTPS and `COOKIE_SECURE=true`.
 5. Sign in at `/admin-login.html`, create at least one active pitch and configure all seven days through the **Работно време** section. Missing hours intentionally prevent bookings. The authenticated `/api/working-hours` API remains available for integrations.
-6. Run `mvn verify` and `node --test src/test/js/availability.test.cjs`. Tests use a disposable H2 database by default. Set `TEST_DB_URL`, `TEST_DB_USER`, `TEST_DB_PASSWORD` to an **empty disposable PostgreSQL database** to run the same tests against PostgreSQL. Tests create/drop their schema. CI uses a dedicated PostgreSQL 17 service and Java 25.
+6. Run `mvn verify` and `node --test src/test/js/availability.test.cjs`. Tests use a disposable H2 database by default. Set `TEST_DB_URL`, `TEST_DB_USER`, `TEST_DB_PASSWORD` to an **empty disposable PostgreSQL database** to run the same tests against PostgreSQL. Booking tests use Flyway migrations and Hibernate validation. Legacy upgrade tests create and remove isolated test schemas; booking tests replace fixture records. CI uses a dedicated PostgreSQL 17 service and Java 25.
 
 ## Required before a paid pilot
 

@@ -19,6 +19,7 @@ services:
       RESEND_API_KEY: "${RESEND_API_KEY:-}"
       RESEND_FROM_EMAIL: "${RESEND_FROM_EMAIL:-}"
       DDL_AUTO: "${DDL_AUTO:-validate}"
+      FLYWAY_BASELINE_ON_MIGRATE: "${FLYWAY_BASELINE_ON_MIGRATE:-true}"
       DEMO_DATA_ENABLED: "${DEMO_DATA_ENABLED:-true}"
       COOKIE_SECURE: "${COOKIE_SECURE:-false}"
       APP_TIME_ZONE: "${APP_TIME_ZONE:-Europe/Sofia}"

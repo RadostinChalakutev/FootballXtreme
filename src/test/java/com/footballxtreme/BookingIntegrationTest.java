@@ -21,11 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
     "spring.datasource.url=${TEST_DB_URL:jdbc:h2:mem:booking;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000}",
     "spring.datasource.username=${TEST_DB_USER:sa}", "spring.datasource.password=${TEST_DB_PASSWORD:}",
-    "spring.jpa.hibernate.ddl-auto=create-drop", "app.admin.password=test-only-long-password",
+    "spring.jpa.hibernate.ddl-auto=validate", "app.admin.password=test-only-long-password",
     "server.servlet.session.cookie.secure=false"
 })
 @AutoConfigureMockMvc
 class BookingIntegrationTest {
+    @Autowired org.flywaydb.core.Flyway flyway;
     @Autowired MockMvc mvc;
     @Autowired ReservationService service;
     @Autowired ReservationRepository reservations;
@@ -49,6 +50,11 @@ class BookingIntegrationTest {
         {"pitchId":%d,"date":"%s","startTime":"12:00","durationMinutes":60,
          "customerName":"Test Customer","customerEmail":"test@example.com","customerPhone":"0888123456","termsAccepted":true}
         """.formatted(pitch.getId(),date); }
+
+    @Test void springRegistersLegacySchemaBaselineGuard() {
+        assertThat(flyway.getConfiguration().getCallbacks())
+            .anyMatch(callback -> callback instanceof LegacySchemaBaselineGuard);
+    }
 
     @Test void publicAvailabilityDoesNotExposePersonalData() throws Exception {
         book(date,LocalTime.NOON,60);

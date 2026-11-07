@@ -43,6 +43,7 @@ docker compose config
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Creates the in-memory administrator account at startup. | Use a unique administrator password of 16–72 UTF-8 bytes and limit access to the admin URL. |
 | `RESEND_API_KEY` / `RESEND_FROM_EMAIL` | Enables transactional confirmation/cancellation email when both are configured. | Use a verified sender and test delivery after every deployment; do not enable public bookings without it. |
 | `DDL_AUTO` | Defaults to `validate`; Flyway applies the bundled schema migrations. | Keep `validate`; add reviewed forward-only Flyway migrations for every schema change. |
+| `FLYWAY_BASELINE_ON_MIGRATE` | Defaults to `true`, guarded by recognition of the legacy FootballXtreme schema. | Allows the first upgrade of the old Hibernate-managed database. Set `false` after the history table exists. |
 | `DEMO_DATA_ENABLED` | Defaults to `true` for an empty local demo database. | Set `false`; it seeds sample pitches and hours and is not for a real venue. |
 | `COOKIE_SECURE` | Defaults to `false` for localhost HTTP. | Set `true` when HTTPS is in place. |
 | `APP_PORT` | Publishes port 8080 by default. | Bind only through a reverse proxy or trusted platform ingress where possible. |
@@ -71,6 +72,21 @@ To stop the containers while retaining the database volume:
 ```bash
 docker compose down
 ```
+
+## Upgrading the existing Render database
+
+Older releases used Hibernate `ddl-auto=update`, so an existing database can contain all application tables but no `flyway_schema_history`. This causes the startup error `Found non-empty schema(s) "public" but no schema history table` when Flyway is first introduced.
+
+The application now handles that specific upgrade automatically. A `beforeBaseline` callback requires the original four tables (`pitches`, `working_hours`, `reservations`, `blocked_times`) and their original columns. Only that recognized layout is baselined at version 1. V2 then adds the new fields and V3 ensures the booking lookup indexes exist. Existing pitches, reservations, opening hours and blocks are retained. An unrelated, incomplete or partially upgraded schema is rejected before baseline history is written.
+
+1. Take a database snapshot or backup and confirm that the service's `DB_URL` selects the intended FootballXtreme database.
+2. Deploy the latest `master` commit. Keep `DDL_AUTO=validate`. `FLYWAY_BASELINE_ON_MIGRATE` defaults to `true`; if an existing Render environment variable or external configuration explicitly sets it to `false`, enable it for this first upgrade.
+3. Check the deployment logs for a successful baseline at version 1 followed by migration to version 3. Open `/actuator/health` and confirm `{"status":"UP"}`, then check the existing bookings in the operator panel.
+4. After that first successful upgrade, set `FLYWAY_BASELINE_ON_MIGRATE=false`. Subsequent deploys use the recorded history normally. Empty databases also work with `false` and run V1, V2 and V3 in order.
+
+If the guard reports an unrecognized schema, inspect its structure and the configured database before proceeding. Do not delete tables, clear existing history, enable Hibernate `create`/`create-drop`, or mark V2 as applied without running it. Back up and review any manually added columns before planning a separate upgrade for that schema.
+
+The baseline version must remain `1`: baselining at `2` would skip the new fields required by this application. Flyway's [baseline-on-migrate documentation](https://documentation.red-gate.com/flyway/reference/configuration/flyway-namespace/flyway-baseline-on-migrate-setting) explains why only migrations above the baseline version are executed.
 
 ## Initial operational setup
 
